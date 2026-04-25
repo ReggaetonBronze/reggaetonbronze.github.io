@@ -301,9 +301,6 @@
 <div class="card">
   <div class="card-label">Defender Types (select 1 or 2)</div>
   <div class="type-grid" id="typeGrid"></div>
-  <div class="selected-display" id="selectedDisplay">
-    <span class="none-selected">No types selected</span>
-  </div>
 </div>
 
 <!-- OPTIONS -->
@@ -323,7 +320,6 @@
   <div class="output-types" id="outTypes1"></div>
   <div class="output-string" id="outString1"></div>
   <button class="copy-btn" onclick="copyString(1)">Copy to Clipboard</button>
-  <div class="effectiveness-note" id="outNote1"></div>
 </div>
 
 <!-- OUTPUT CARD: EFFECTIVE -->
@@ -332,7 +328,6 @@
   <div class="output-types" id="outTypes2"></div>
   <div class="output-string" id="outString2"></div>
   <button class="copy-btn" onclick="copyString(2)">Copy to Clipboard</button>
-  <div class="effectiveness-note" id="outNote2"></div>
 </div>
 
 <script>
@@ -407,19 +402,9 @@ function toggleType(t) {
 }
 
 function updateSelectedDisplay() {
-  // Update button states
   document.querySelectorAll('.type-btn').forEach(btn => {
     btn.classList.toggle('active', selectedTypes.includes(btn.dataset.type));
   });
-
-  const display = document.getElementById('selectedDisplay');
-  if (selectedTypes.length === 0) {
-    display.innerHTML = '<span class="none-selected">No types selected</span>';
-  } else {
-    display.innerHTML = selectedTypes.map(t =>
-      `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
-    ).join('');
-  }
 }
 
 function setMode(btn) {
@@ -460,13 +445,13 @@ function generate() {
       // mono: 2x = super, 1x = normal (skip), 0.5x = resist
       if (mult >= 1.9) superEff.push(atk);
       // For mono there's no middle tier that makes sense for "effective"
-      // but we still show it if mode=both
+      // but we still show it if mode=both (same as PokeString)
     }
   });
 
   // Build search strings (PoGo uses "attack:[type]" format)
   // Actually PoGo search for type effectiveness isn't by attack type name —
-  // This generates a string of Pokemon names filtered by type.
+  // PokeString generates a string of Pokemon names filtered by type.
   // The actual PoGo search string for "attacks that are effective" is:
   // @attack-type-name (filters your pokemon by their attack type)
   // e.g.  @fire&@rock means pokemon with fire OR rock fast/charged moves
@@ -497,9 +482,6 @@ function generate() {
     `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
   ).join('');
   document.getElementById('outString1').textContent = s1;
-  document.getElementById('outNote1').textContent =
-    superEff.length === 0 ? 'No types deal super effective damage.' :
-    `Paste into Pokémon GO search bar to filter Pokémon with these attack types.`;
 
   // Show effective output if mode=both and dual type
   const card2 = document.getElementById('outCard2');
@@ -510,8 +492,6 @@ function generate() {
       `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
     ).join('');
     document.getElementById('outString2').textContent = s2;
-    document.getElementById('outNote2').textContent =
-      'Single-type super effective hits against one of the two types.';
   } else {
     card2.classList.remove('visible');
   }
