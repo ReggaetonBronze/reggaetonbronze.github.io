@@ -11,7 +11,7 @@
     --bg: #0d0f14;
     --panel: #14171f;
     --border: #2a2f3d;
-    --accent: #f7c948;
+    --accent: #2a8fc4;
     --accent2: #e8533a;
     --text: #e8eaf0;
     --muted: #6b7280;
@@ -21,7 +21,7 @@
     --bug: #8fbc45; --dark: #5b5168; --dragon: #6b50de; --electric: #f6c831;
     --fairy: #ef80e0; --fighting: #c2452c; --fire: #f4631e; --flying: #97aee3;
     --ghost: #6156a6; --grass: #62bb5b; --ground: #d97c3a; --ice: #76cec0;
-    --normal: #9a9a8e; --poison: #b85db1; --psychic: #f76b8b; --rock: #c9bc74;
+    --normal: #e8e8e8; --poison: #b85db1; --psychic: #f76b8b; --rock: #c9bc74;
     --steel: #9ab8ce; --water: #538ee3;
   }
 
@@ -86,18 +86,18 @@
   /* Type grid */
   .type-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.4rem;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
   }
 
   .type-btn {
-    padding: 0.35rem 0.5rem;
+    padding: 0.6rem 0.5rem;
     border: 1px solid transparent;
     border-radius: 3px;
     cursor: pointer;
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     background: rgba(255,255,255,0.05);
@@ -209,7 +209,7 @@
     max-width: 680px;
     padding: 0.9rem;
     background: var(--accent);
-    color: #0d0f14;
+    color: #ffffff;
     border: none;
     border-radius: 4px;
     font-family: 'Rajdhani', sans-serif;
@@ -221,7 +221,7 @@
     transition: all 0.15s;
     margin-bottom: 1rem;
   }
-  .go-btn:hover { background: #ffe077; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(247,201,72,0.25); }
+  .go-btn:hover { background: #3aa8e0; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(42,143,196,0.3); }
   .go-btn:active { transform: translateY(0); }
 
   /* Output */
@@ -299,20 +299,13 @@
 
 <!-- TYPE SELECTOR -->
 <div class="card">
-  <div class="card-label">Defender Types (select 1 or 2)</div>
   <div class="type-grid" id="typeGrid"></div>
 </div>
 
-<!-- OPTIONS -->
-<div class="card">
-  <div class="card-label">Effective Attacks to include</div>
-  <div class="mode-row">
-    <button class="mode-btn" data-mode="superonly" onclick="setMode(this)">Super Effective only (2.56× / 1.6×)</button>
-    <button class="mode-btn active" data-mode="both" onclick="setMode(this)">Super + Effective (includes 1.6×)</button>
-  </div>
+<div style="display:flex;gap:0.75rem;width:100%;max-width:680px;margin-bottom:1rem;">
+  <button class="go-btn" style="margin-bottom:0;flex:1;" onclick="generate()">▶ GENERATE</button>
+  <button class="go-btn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="reset()">✕ RESET</button>
 </div>
-
-<button class="go-btn" onclick="generate()">▶ GENERATE STRING</button>
 
 <!-- OUTPUT CARD: SUPER EFFECTIVE -->
 <div class="output-card" id="outCard1">
@@ -330,9 +323,17 @@
   <button class="copy-btn" onclick="copyString(2)">Copy to Clipboard</button>
 </div>
 
+<!-- OUTPUT CARD: OPTIMAL -->
+<div class="output-card" id="outCard3">
+  <div class="output-title" id="outTitle3"></div>
+  <div class="output-types" id="outTypes3"></div>
+  <div class="output-string" id="outString3"></div>
+  <button class="copy-btn" onclick="copyString(3)">Copy to Clipboard</button>
+</div>
+
 <script>
 // ===== TYPE DATA =====
-const ALL_TYPES = ['bug','dark','dragon','electric','fairy','fighting','fire','flying','ghost','grass','ground','ice','normal','poison','psychic','rock','steel','water'];
+const ALL_TYPES = ['fire','fighting','ground','electric','rock','grass','bug','poison','water','ice','dragon','psychic','ghost','fairy','normal','dark','steel','flying'];
 
 // effectivenessTable[attacking][defending] = multiplier
 // Simplified: using standard Gen 6+ chart, ignoring immunities for PoGo (PoGo has no 0x, uses 0.39x instead)
@@ -378,7 +379,7 @@ const typeColors = {
 // ===== STATE =====
 let selectedTypes = [];
 let mode = 'both'; // 'both' or 'superonly'
-let generatedStrings = ['',''];
+let generatedStrings = ['','',''];
 
 // ===== BUILD UI =====
 const grid = document.getElementById('typeGrid');
@@ -411,6 +412,13 @@ function setMode(btn) {
   mode = btn.dataset.mode;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+}
+
+function reset() {
+  selectedTypes = [];
+  updateSelectedDisplay();
+  generatedStrings = ['','',''];
+  ['outCard1','outCard2','outCard3'].forEach(id => document.getElementById(id).classList.remove('visible'));
 }
 
 // ===== CALCULATE EFFECTIVENESS =====
@@ -472,6 +480,7 @@ function generate() {
 
   generatedStrings[0] = s1;
   generatedStrings[1] = s2;
+  generatedStrings[2] = '';
 
   // Show super effective output
   const card1 = document.getElementById('outCard1');
@@ -494,6 +503,38 @@ function generate() {
     document.getElementById('outString2').textContent = s2;
   } else {
     card2.classList.remove('visible');
+  }
+
+  // ===== OPTIMAL: effective moves AND resists defender types =====
+  // A pokemon type qualifies if it resists at least one defender type
+  // and is NOT 2x weak to any defender type
+  const resistTypes = ALL_TYPES.filter(pokeType => {
+    let resistsAtLeastOne = false;
+    let doubleWeak = false;
+    defTypes.forEach(defType => {
+      // chart[defType][pokeType] = damage multiplier when defType attacks pokeType
+      const dmg = chart[defType]?.[pokeType] ?? 1;
+      const pogoDmg = dmg === 0 ? 0.39 : dmg;
+      if (pogoDmg <= 0.625) resistsAtLeastOne = true;
+      if (pogoDmg >= 2) doubleWeak = true;
+    });
+    return resistsAtLeastOne && !doubleWeak;
+  });
+
+  const card3 = document.getElementById('outCard3');
+  const moveStr = effective.length > 0 ? s2 : s1; // use broadest move set
+  if (resistTypes.length > 0 && moveStr !== '(none)') {
+    card3.classList.add('visible');
+    document.getElementById('outTitle3').textContent = 'Optimal Attackers (effective moves + bulk)';
+    document.getElementById('outTypes3').innerHTML = resistTypes.map(t =>
+      `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
+    ).join('');
+    const resistStr = resistTypes.map(t => `@${searchNames[t]}`).join(',');
+    const optimalStr = `(${moveStr})&(${resistStr})`;
+    generatedStrings[2] = optimalStr;
+    document.getElementById('outString3').textContent = optimalStr;
+  } else {
+    card3.classList.remove('visible');
   }
 
   // Scroll to output
