@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PokeString Local</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inconsolata:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --panel: #14171f;
+    --border: #2a2f3d;
+    --accent: #f7c948;
+    --accent2: #e8533a;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --output-bg: #0a0c10;
+
+    /* Type colors */
+    --bug: #8fbc45; --dark: #5b5168; --dragon: #6b50de; --electric: #f6c831;
+    --fairy: #ef80e0; --fighting: #c2452c; --fire: #f4631e; --flying: #97aee3;
+    --ghost: #6156a6; --grass: #62bb5b; --ground: #d97c3a; --ice: #76cec0;
+    --normal: #9a9a8e; --poison: #b85db1; --psychic: #f76b8b; --rock: #c9bc74;
+    --steel: #9ab8ce; --water: #538ee3;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inconsolata', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.07) 3px,
+      rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(247,201,72,0.3);
+    margin-bottom: 0.2rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 1rem;
+  }
+
+  .card-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Type grid */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.4rem;
+  }
+
+  .type-btn {
+    padding: 0.35rem 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    transition: all 0.12s ease;
+    text-align: center;
+  }
+  .type-btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
+  .type-btn.active {
+    border-color: currentColor;
+    filter: brightness(1.15);
+    box-shadow: 0 0 12px currentColor;
+  }
+
+  /* Assign type colors */
+  .type-btn[data-type="bug"]      { color: var(--bug); }
+  .type-btn[data-type="dark"]     { color: var(--dark); }
+  .type-btn[data-type="dragon"]   { color: var(--dragon); }
+  .type-btn[data-type="electric"] { color: var(--electric); }
+  .type-btn[data-type="fairy"]    { color: var(--fairy); }
+  .type-btn[data-type="fighting"] { color: var(--fighting); }
+  .type-btn[data-type="fire"]     { color: var(--fire); }
+  .type-btn[data-type="flying"]   { color: var(--flying); }
+  .type-btn[data-type="ghost"]    { color: var(--ghost); }
+  .type-btn[data-type="grass"]    { color: var(--grass); }
+  .type-btn[data-type="ground"]   { color: var(--ground); }
+  .type-btn[data-type="ice"]      { color: var(--ice); }
+  .type-btn[data-type="normal"]   { color: var(--normal); }
+  .type-btn[data-type="poison"]   { color: var(--poison); }
+  .type-btn[data-type="psychic"]  { color: var(--psychic); }
+  .type-btn[data-type="rock"]     { color: var(--rock); }
+  .type-btn[data-type="steel"]    { color: var(--steel); }
+  .type-btn[data-type="water"]    { color: var(--water); }
+
+  .type-btn.active[data-type="bug"]      { background: rgba(143,188,69,0.12); }
+  .type-btn.active[data-type="dark"]     { background: rgba(91,81,104,0.2); }
+  .type-btn.active[data-type="dragon"]   { background: rgba(107,80,222,0.15); }
+  .type-btn.active[data-type="electric"] { background: rgba(246,200,49,0.12); }
+  .type-btn.active[data-type="fairy"]    { background: rgba(239,128,224,0.12); }
+  .type-btn.active[data-type="fighting"] { background: rgba(194,69,44,0.15); }
+  .type-btn.active[data-type="fire"]     { background: rgba(244,99,30,0.15); }
+  .type-btn.active[data-type="flying"]   { background: rgba(151,174,227,0.12); }
+  .type-btn.active[data-type="ghost"]    { background: rgba(97,86,166,0.15); }
+  .type-btn.active[data-type="grass"]    { background: rgba(98,187,91,0.12); }
+  .type-btn.active[data-type="ground"]   { background: rgba(217,124,58,0.15); }
+  .type-btn.active[data-type="ice"]      { background: rgba(118,206,192,0.12); }
+  .type-btn.active[data-type="normal"]   { background: rgba(154,154,142,0.12); }
+  .type-btn.active[data-type="poison"]   { background: rgba(184,93,177,0.12); }
+  .type-btn.active[data-type="psychic"]  { background: rgba(247,107,139,0.12); }
+  .type-btn.active[data-type="rock"]     { background: rgba(201,188,116,0.12); }
+  .type-btn.active[data-type="steel"]    { background: rgba(154,184,206,0.12); }
+  .type-btn.active[data-type="water"]    { background: rgba(83,142,227,0.12); }
+
+  .selected-display {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+    min-height: 2rem;
+    align-items: center;
+  }
+
+  .type-tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+  }
+
+  .none-selected {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+
+  /* Mode toggle */
+  .mode-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+  }
+
+  .mode-btn {
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .mode-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(247,201,72,0.08);
+  }
+
+  /* GO button */
+  .go-btn {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    padding: 0.9rem;
+    background: var(--accent);
+    color: #0d0f14;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 1rem;
+  }
+  .go-btn:hover { background: #ffe077; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(247,201,72,0.25); }
+  .go-btn:active { transform: translateY(0); }
+
+  /* Output */
+  .output-card {
+    background: var(--output-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 0.75rem;
+    display: none;
+  }
+  .output-card.visible { display: block; }
+
+  .output-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .output-string {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.8rem;
+    color: #a8f0c8;
+    word-break: break-all;
+    line-height: 1.6;
+    background: rgba(168,240,200,0.04);
+    border: 1px solid rgba(168,240,200,0.1);
+    border-radius: 3px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .output-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .copy-btn {
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--accent2);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--accent2);
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.12s;
+    letter-spacing: 0.05em;
+  }
+  .copy-btn:hover { background: rgba(232,83,58,0.1); }
+  .copy-btn.copied { border-color: #62bb5b; color: #62bb5b; background: rgba(98,187,91,0.08); }
+
+  .effectiveness-note {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1rem 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>PokeString</h1>
+<p class="subtitle">Pokemon GO · Type Effectiveness · Search String</p>
+
+<!-- TYPE SELECTOR -->
+<div class="card">
+  <div class="card-label">Defender Types (select 1 or 2)</div>
+  <div class="type-grid" id="typeGrid"></div>
+  <div class="selected-display" id="selectedDisplay">
+    <span class="none-selected">No types selected</span>
+  </div>
+</div>
+
+<!-- OPTIONS -->
+<div class="card">
+  <div class="card-label">Effective Attacks to include</div>
+  <div class="mode-row">
+    <button class="mode-btn" data-mode="superonly" onclick="setMode(this)">Super Effective only (2.56× / 1.6×)</button>
+    <button class="mode-btn active" data-mode="both" onclick="setMode(this)">Super + Effective (includes 1.6×)</button>
+  </div>
+</div>
+
+<button class="go-btn" onclick="generate()">▶ GENERATE STRING</button>
+
+<!-- OUTPUT CARD: SUPER EFFECTIVE -->
+<div class="output-card" id="outCard1">
+  <div class="output-title" id="outTitle1"></div>
+  <div class="output-types" id="outTypes1"></div>
+  <div class="output-string" id="outString1"></div>
+  <button class="copy-btn" onclick="copyString(1)">Copy to Clipboard</button>
+  <div class="effectiveness-note" id="outNote1"></div>
+</div>
+
+<!-- OUTPUT CARD: EFFECTIVE -->
+<div class="output-card" id="outCard2">
+  <div class="output-title" id="outTitle2"></div>
+  <div class="output-types" id="outTypes2"></div>
+  <div class="output-string" id="outString2"></div>
+  <button class="copy-btn" onclick="copyString(2)">Copy to Clipboard</button>
+  <div class="effectiveness-note" id="outNote2"></div>
+</div>
+
+<script>
+// ===== TYPE DATA =====
+const ALL_TYPES = ['bug','dark','dragon','electric','fairy','fighting','fire','flying','ghost','grass','ground','ice','normal','poison','psychic','rock','steel','water'];
+
+// effectivenessTable[attacking][defending] = multiplier
+// Simplified: using standard Gen 6+ chart, ignoring immunities for PoGo (PoGo has no 0x, uses 0.39x instead)
+// We represent effectiveness as: 2=super (2x), 1=normal (1x), 0.5=not very (0.5x)
+// For dual types the multipliers stack.
+const chart = {
+  bug:      {dark:2,fairy:0.5,fighting:0.5,fire:0.5,flying:0.5,ghost:0.5,grass:2,ground:1,ice:1,normal:1,poison:0.5,psychic:2,rock:1,steel:0.5,water:1,bug:1,dragon:1,electric:1},
+  dark:     {dark:0.5,fairy:0.5,fighting:0.5,ghost:2,psychic:2,bug:1,dragon:1,electric:1,fire:1,flying:1,grass:1,ground:1,ice:1,normal:1,poison:1,rock:1,steel:1,water:1},
+  dragon:   {dragon:2,fairy:0.5,steel:0.5,bug:1,dark:1,electric:1,fighting:1,fire:1,flying:1,ghost:1,grass:1,ground:1,ice:1,normal:1,poison:1,psychic:1,rock:1,water:1},
+  electric: {dragon:0.5,electric:0.5,flying:2,grass:0.5,ground:0,water:2,bug:1,dark:1,fairy:1,fighting:1,fire:1,ghost:1,ice:1,normal:1,poison:1,psychic:1,rock:1,steel:1},
+  fairy:    {dark:2,dragon:2,fighting:2,fire:0.5,poison:0.5,steel:0.5,bug:1,electric:1,fairy:1,flying:1,ghost:1,grass:1,ground:1,ice:1,normal:1,psychic:1,rock:1,water:1},
+  fighting: {bug:0.5,dark:2,fairy:0.5,flying:0.5,ghost:0,ice:2,normal:2,poison:0.5,psychic:0.5,rock:2,steel:2,dragon:1,electric:1,fighting:1,fire:1,grass:1,ground:1,water:1},
+  fire:     {bug:2,fairy:1,grass:2,ice:2,rock:0.5,steel:2,water:0.5,dragon:0.5,fire:0.5,bug:2,dark:1,electric:1,fighting:1,flying:1,ghost:1,ground:1,normal:1,poison:1,psychic:1},
+  flying:   {bug:2,electric:0.5,fighting:2,grass:2,ground:1,rock:0.5,steel:0.5,dark:1,dragon:1,fairy:1,fire:1,flying:1,ghost:1,ice:1,normal:1,poison:1,psychic:1,water:1},
+  ghost:    {dark:0.5,ghost:2,normal:0,psychic:2,bug:1,dragon:1,electric:1,fairy:1,fighting:1,fire:1,flying:1,grass:1,ground:1,ice:1,poison:1,rock:1,steel:1,water:1},
+  grass:    {bug:0.5,dark:1,dragon:0.5,electric:0.5,fairy:1,fighting:1,fire:0.5,flying:0.5,ghost:1,grass:0.5,ground:2,ice:1,normal:1,poison:0.5,psychic:1,rock:2,steel:0.5,water:2},
+  ground:   {bug:0.5,dark:1,dragon:1,electric:2,fairy:1,fighting:1,fire:2,flying:0,ghost:1,grass:0.5,ground:1,ice:1,normal:1,poison:2,psychic:1,rock:2,steel:2,water:1},
+  ice:      {bug:1,dark:1,dragon:2,electric:1,fairy:1,fighting:0.5,fire:0.5,flying:2,ghost:1,grass:2,ground:2,ice:0.5,normal:1,poison:1,psychic:1,rock:1,steel:0.5,water:0.5},
+  normal:   {bug:1,dark:1,dragon:1,electric:1,fairy:1,fighting:1,fire:1,flying:1,ghost:0,grass:1,ground:1,ice:1,normal:1,poison:1,psychic:1,rock:0.5,steel:0.5,water:1},
+  poison:   {bug:1,dark:1,dragon:1,electric:1,fairy:2,fighting:1,fire:1,flying:1,ghost:0.5,grass:2,ground:0.5,ice:1,normal:1,poison:0.5,psychic:1,rock:0.5,steel:0,water:1},
+  psychic:  {bug:0.5,dark:0,dragon:1,electric:1,fairy:1,fighting:2,fire:1,flying:1,ghost:1,grass:1,ground:1,ice:1,normal:1,poison:2,psychic:0.5,rock:1,steel:0.5,water:1},
+  rock:     {bug:2,dark:1,dragon:1,electric:1,fairy:1,fighting:0.5,fire:2,flying:2,ghost:1,grass:1,ground:0.5,ice:2,normal:1,poison:1,psychic:1,rock:1,steel:0.5,water:1},
+  steel:    {bug:1,dark:1,dragon:1,electric:0.5,fairy:2,fighting:1,fire:0.5,flying:1,ghost:1,grass:1,ground:1,ice:2,normal:1,poison:1,psychic:1,rock:2,steel:0.5,water:0.5},
+  water:    {bug:1,dark:1,dragon:0.5,electric:1,fairy:1,fighting:1,fire:2,flying:1,ghost:1,grass:0.5,ground:2,ice:1,normal:1,poison:1,psychic:1,rock:2,steel:1,water:0.5},
+};
+
+// Pokemon GO search string type names (English)
+const searchNames = {
+  bug:'bug',dark:'dark',dragon:'dragon',electric:'electric',fairy:'fairy',
+  fighting:'fighting',fire:'fire',flying:'flying',ghost:'ghost',grass:'grass',
+  ground:'ground',ice:'ice',normal:'normal',poison:'poison',psychic:'psychic',
+  rock:'rock',steel:'steel',water:'water'
+};
+
+// TYPE COLORS for tags
+const typeColors = {
+  bug:'#8fbc45',dark:'#8a7fa8',dragon:'#7b6de8',electric:'#f6c831',fairy:'#ef80e0',
+  fighting:'#c2452c',fire:'#f4631e',flying:'#97aee3',ghost:'#6156a6',grass:'#62bb5b',
+  ground:'#d97c3a',ice:'#76cec0',normal:'#9a9a8e',poison:'#b85db1',psychic:'#f76b8b',
+  rock:'#c9bc74',steel:'#9ab8ce',water:'#538ee3'
+};
+
+// ===== STATE =====
+let selectedTypes = [];
+let mode = 'both'; // 'both' or 'superonly'
+let generatedStrings = ['',''];
+
+// ===== BUILD UI =====
+const grid = document.getElementById('typeGrid');
+ALL_TYPES.forEach(t => {
+  const btn = document.createElement('button');
+  btn.className = 'type-btn';
+  btn.dataset.type = t;
+  btn.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+  btn.onclick = () => toggleType(t);
+  grid.appendChild(btn);
+});
+
+function toggleType(t) {
+  if (selectedTypes.includes(t)) {
+    selectedTypes = selectedTypes.filter(x => x !== t);
+  } else {
+    if (selectedTypes.length >= 2) selectedTypes.shift();
+    selectedTypes.push(t);
+  }
+  updateSelectedDisplay();
+}
+
+function updateSelectedDisplay() {
+  // Update button states
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.classList.toggle('active', selectedTypes.includes(btn.dataset.type));
+  });
+
+  const display = document.getElementById('selectedDisplay');
+  if (selectedTypes.length === 0) {
+    display.innerHTML = '<span class="none-selected">No types selected</span>';
+  } else {
+    display.innerHTML = selectedTypes.map(t =>
+      `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
+    ).join('');
+  }
+}
+
+function setMode(btn) {
+  mode = btn.dataset.mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ===== CALCULATE EFFECTIVENESS =====
+function getEffectiveness(attackType, defTypes) {
+  // In PoGo, 0x (immune) becomes 0.39x — but for search string purposes we include it
+  // We treat 0 as still "technically hits" — include in not very effective
+  let mult = 1;
+  defTypes.forEach(dt => {
+    const m = chart[attackType]?.[dt] ?? 1;
+    mult *= (m === 0 ? 0.39 : m); // PoGo immunity workaround
+  });
+  return mult;
+}
+
+function generate() {
+  if (selectedTypes.length === 0) {
+    alert('Please select at least one defending type!');
+    return;
+  }
+
+  const defTypes = selectedTypes;
+  const superEff = [];
+  const effective = [];
+
+  ALL_TYPES.forEach(atk => {
+    const mult = getEffectiveness(atk, defTypes);
+    if (defTypes.length === 2) {
+      // dual: 4x = super (2*2), 2x = effective if mode=both
+      if (mult >= 3.9) superEff.push(atk);
+      if (mult >= 1.55 && mode === 'both') effective.push(atk);
+    } else {
+      // mono: 2x = super, 1x = normal (skip), 0.5x = resist
+      if (mult >= 1.9) superEff.push(atk);
+      // For mono there's no middle tier that makes sense for "effective"
+      // but we still show it if mode=both (same as PokeString)
+    }
+  });
+
+  // Build search strings (PoGo uses "attack:[type]" format)
+  // Actually PoGo search for type effectiveness isn't by attack type name —
+  // PokeString generates a string of Pokemon names filtered by type.
+  // The actual PoGo search string for "attacks that are effective" is:
+  // @attack-type-name (filters your pokemon by their attack type)
+  // e.g.  @fire&@rock means pokemon with fire OR rock fast/charged moves
+  // The correct format for PoGo is: @fire,@rock,@water
+  // (comma = OR in PoGo search)
+
+  const buildString = (types) => {
+    if (types.length === 0) return '(none)';
+    return [
+      types.map(t => `@1${searchNames[t]}`).join(','),
+      types.map(t => `@2${searchNames[t]}`).join(','),
+      types.map(t => `@3${searchNames[t]}`).join(',')
+    ].join(',');
+  };
+
+  const s1 = buildString(superEff);
+  const s2 = effective.length > 0 ? buildString(effective) : '';
+
+  generatedStrings[0] = s1;
+  generatedStrings[1] = s2;
+
+  // Show super effective output
+  const card1 = document.getElementById('outCard1');
+  card1.classList.add('visible');
+  document.getElementById('outTitle1').textContent =
+    defTypes.length === 2 ? 'Double Super Effective (4×)' : 'Super Effective (2×)';
+  document.getElementById('outTypes1').innerHTML = superEff.map(t =>
+    `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
+  ).join('');
+  document.getElementById('outString1').textContent = s1;
+  document.getElementById('outNote1').textContent =
+    superEff.length === 0 ? 'No types deal super effective damage.' :
+    `Paste into Pokémon GO search bar to filter Pokémon with these attack types.`;
+
+  // Show effective output if mode=both and dual type
+  const card2 = document.getElementById('outCard2');
+  if (mode === 'both' && defTypes.length === 2 && effective.length > 0) {
+    card2.classList.add('visible');
+    document.getElementById('outTitle2').textContent = 'Effective (1.6×)';
+    document.getElementById('outTypes2').innerHTML = effective.map(t =>
+      `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
+    ).join('');
+    document.getElementById('outString2').textContent = s2;
+    document.getElementById('outNote2').textContent =
+      'Single-type super effective hits against one of the two types.';
+  } else {
+    card2.classList.remove('visible');
+  }
+
+  // Scroll to output
+  card1.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyString(n) {
+  const str = generatedStrings[n - 1];
+  if (!str || str === '(none)') return;
+  navigator.clipboard.writeText(str).then(() => {
+    const btn = document.querySelectorAll('.copy-btn')[n - 1];
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy to Clipboard';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
