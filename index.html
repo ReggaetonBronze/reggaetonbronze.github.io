@@ -338,137 +338,134 @@
   <button class="copy-btn" onclick="copyString(3)">Copy to Clipboard</button>
 </div>
 
+<!-- OUTPUT CARD: DYNAMAX DEFENSIVE -->
+<div class="output-card" id="outCard4">
+  <div class="output-title">Dynamax Defensive Phase</div>
+  <div class="output-types" id="outTypes4"></div>
+  <div class="output-string" id="outString4"></div>
+  <button class="copy-btn" onclick="copyString(4)">Copy to Clipboard</button>
+</div>
+
 <script>
 // ===== TYPE DATA =====
 const ALL_TYPES = ['fire','fighting','ground','electric','rock','grass','bug','poison','water','ice','dragon','psychic','ghost','fairy','normal','dark','steel','flying'];
 
 // ===== POKEMON DATA =====
-// Legendaries, Mythicals, Ultra Beasts, Gigantamax, Dynamax 3★+
-// Only unique type combos per species; alphabetical by display name
 const POKEMON_LIST = [
-  // A
-  {name:'Abomasnow (Gigantamax)', t:['grass','ice']},
+  {name:'Abomasnow', t:['grass','ice']},
   {name:'Aerodactyl', t:['rock','flying']},
-  {name:'Alakazam (Gigantamax)', t:['psychic']},
-  {name:'Appletun (Gigantamax)', t:['grass','dragon']},
+  {name:'Aggron (Mega)', t:['steel']},
+  {name:'Alakazam', t:['psychic']},
+  {name:'Altaria (Mega)', t:['dragon','fairy']},
+  {name:'Ampharos (Mega)', t:['electric','dragon']},
+  {name:'Appletun', t:['grass','dragon']},
   {name:'Arceus', t:['normal']},
   {name:'Articuno', t:['ice','flying']},
   {name:'Articuno (Galarian)', t:['psychic','flying']},
+  {name:'Audino (Mega)', t:['normal','fairy']},
   {name:'Azelf', t:['psychic']},
-  // B
+  {name:'Banette', t:['ghost']},
+  {name:'Beedrill', t:['bug','poison']},
   {name:'Blacephalon', t:['fire','ghost']},
-  {name:'Blaziken (Gigantamax)', t:['fire','fighting']},
-  {name:'Butterfree (Gigantamax)', t:['bug','flying']},
+  {name:'Blaziken', t:['fire','fighting']},
+  {name:'Butterfree', t:['bug','flying']},
   {name:'Buzzwole', t:['bug','fighting']},
-  // C
   {name:'Calyrex', t:['psychic','grass']},
   {name:'Calyrex (Ice Rider)', t:['psychic','ice']},
   {name:'Calyrex (Shadow Rider)', t:['psychic','ghost']},
-  {name:'Celebi', t:['psychic','grass']},
+  {name:'Camerupt', t:['fire','ground']},
   {name:'Celesteela', t:['steel','flying']},
-  {name:'Centiskorch (Gigantamax)', t:['fire','bug']},
+  {name:'Centiskorch', t:['fire','bug']},
+  {name:'Charizard (Mega X)', t:['fire','dragon']},
+  {name:'Charizard (Mega Y)', t:['fire','flying']},
   {name:'Chi-Yu', t:['dark','fire']},
   {name:'Chien-Pao', t:['dark','ice']},
+  {name:'Coalossal', t:['rock','fire']},
   {name:'Cobalion', t:['steel','fighting']},
-  {name:'Coalossal (Gigantamax)', t:['rock','fire']},
-  {name:'Copperajah (Gigantamax)', t:['steel']},
+  {name:'Copperajah', t:['steel']},
   {name:'Cresselia', t:['psychic']},
-  // D
   {name:'Darkrai', t:['dark']},
-  {name:'Deoxys (Attack/Defense/Normal/Speed)', t:['psychic']},
+  {name:'Deoxys', t:['psychic']},
   {name:'Dialga', t:['steel','dragon']},
-  {name:'Dialga (Origin)', t:['steel','dragon']},
   {name:'Diancie', t:['rock','fairy']},
-  {name:'Drednaw (Gigantamax)', t:['water','rock']},
-  {name:'Duraludon (Gigantamax)', t:['steel','dragon']},
-  // E
+  {name:'Drednaw', t:['water','rock']},
+  {name:'Duraludon', t:['steel','dragon']},
   {name:'Enamorus', t:['fairy','flying']},
-  {name:'Enamorus (Therian)', t:['fairy','flying']},
   {name:'Entei', t:['fire']},
   {name:'Eternatus', t:['poison','dragon']},
-  // F
   {name:'Fezandipiti', t:['poison','fairy']},
-  {name:'Flapple (Gigantamax)', t:['grass','dragon']},
+  {name:'Flapple', t:['grass','dragon']},
+  {name:'Gallade (Mega)', t:['psychic','fighting']},
+  {name:'Garbodor', t:['poison']},
+  {name:'Garchomp (Mega)', t:['dragon','ground']},
+  {name:'Gardevoir (Mega)', t:['psychic','fairy']},
   {name:'Genesect', t:['bug','steel']},
-  {name:'Garbodor (Gigantamax)', t:['poison']},
-  {name:'Gengar (Gigantamax)', t:['ghost','poison']},
-  {name:'Giratina (Altered)', t:['ghost','dragon']},
-  {name:'Giratina (Origin)', t:['ghost','dragon']},
+  {name:'Gengar', t:['ghost','poison']},
+  {name:'Giratina', t:['ghost','dragon']},
+  {name:'Glalie', t:['ice']},
   {name:'Glastrier', t:['ice']},
-  {name:'Goodra (Gigantamax)', t:['dragon']},
-  {name:'Grimmsnarl (Gigantamax)', t:['dark','fairy']},
+  {name:'Goodra', t:['dragon']},
+  {name:'Grimmsnarl', t:['dark','fairy']},
   {name:'Groudon', t:['ground']},
   {name:'Groudon (Primal)', t:['ground','fire']},
   {name:'Guzzlord', t:['dark','dragon']},
-  // H
-  {name:'Hatterene (Gigantamax)', t:['psychic','fairy']},
+  {name:'Gyarados (Mega)', t:['water','dark']},
+  {name:'Hatterene', t:['psychic','fairy']},
   {name:'Heatran', t:['fire','steel']},
+  {name:'Heracross', t:['bug','fighting']},
   {name:'Ho-Oh', t:['fire','flying']},
   {name:'Hoopa (Confined)', t:['psychic','ghost']},
   {name:'Hoopa (Unbound)', t:['psychic','dark']},
-  {name:'Hydreigon', t:['dark','dragon']},
-  // I
-  {name:'Inteleon (Gigantamax)', t:['water']},
-  // J
+  {name:'Houndoom (Mega)', t:['dark','fire']},
+  {name:'Inteleon', t:['water']},
   {name:'Jirachi', t:['steel','psychic']},
-  // K
-  {name:'Kangaskhan (Gigantamax)', t:['normal']},
+  {name:'Kangaskhan', t:['normal']},
   {name:'Kartana', t:['grass','steel']},
   {name:'Keldeo', t:['water','fighting']},
-  {name:'Kingler (Gigantamax)', t:['water']},
+  {name:'Kingler', t:['water']},
   {name:'Koraidon', t:['fighting','dragon']},
   {name:'Kubfu', t:['fighting']},
   {name:'Kyogre', t:['water']},
-  {name:'Kyogre (Primal)', t:['water']},
   {name:'Kyurem', t:['dragon','ice']},
-  {name:'Kyurem (Black)', t:['dragon','ice']},
-  {name:'Kyurem (White)', t:['dragon','ice']},
-  // L
   {name:'Landorus', t:['ground','flying']},
-  {name:'Landorus (Therian)', t:['ground','flying']},
   {name:'Latias', t:['dragon','psychic']},
   {name:'Latios', t:['dragon','psychic']},
+  {name:'Lopunny (Mega)', t:['normal','fighting']},
+  {name:'Lucario (Mega)', t:['fighting','steel']},
   {name:'Lugia', t:['psychic','flying']},
   {name:'Lunala', t:['psychic','ghost']},
-  // M
   {name:'Magearna', t:['steel','fairy']},
   {name:'Manaphy', t:['water']},
   {name:'Marshadow', t:['fighting','ghost']},
   {name:'Melmetal', t:['steel']},
-  {name:'Melmetal (Gigantamax)', t:['steel']},
   {name:'Meloetta (Aria)', t:['normal','psychic']},
   {name:'Meloetta (Pirouette)', t:['normal','fighting']},
   {name:'Mesprit', t:['psychic']},
   {name:'Mew', t:['psychic']},
   {name:'Mewtwo', t:['psychic']},
-  {name:'Mewtwo (Gigantamax)', t:['psychic']},
+  {name:'Mewtwo (Mega X)', t:['psychic','fighting']},
   {name:'Miraidon', t:['electric','dragon']},
   {name:'Moltres', t:['fire','flying']},
   {name:'Moltres (Galarian)', t:['dark','flying']},
   {name:'Munkidori', t:['poison','psychic']},
-  // N
   {name:'Naganadel', t:['poison','dragon']},
   {name:'Necrozma', t:['psychic']},
   {name:'Necrozma (Dawn Wings)', t:['psychic','ghost']},
   {name:'Necrozma (Dusk Mane)', t:['psychic','steel']},
   {name:'Necrozma (Ultra)', t:['psychic','dragon']},
   {name:'Nihilego', t:['rock','poison']},
-  // O
   {name:'Ogerpon (Cornerstone)', t:['grass','rock']},
   {name:'Ogerpon (Hearthflame)', t:['grass','fire']},
   {name:'Ogerpon (Teal Mask)', t:['grass']},
   {name:'Ogerpon (Wellspring)', t:['grass','water']},
   {name:'Okidogi', t:['poison','fighting']},
-  // P
   {name:'Palkia', t:['water','dragon']},
-  {name:'Palkia (Origin)', t:['water','dragon']},
   {name:'Pecharunt', t:['poison','ghost']},
   {name:'Pheromosa', t:['bug','fighting']},
   {name:'Phione', t:['water']},
-  {name:'Pikachu (Gigantamax)', t:['electric']},
+  {name:'Pikachu', t:['electric']},
+  {name:'Pinsir (Mega)', t:['bug','flying']},
   {name:'Poipole', t:['poison']},
-  // R
-  {name:'Raichu (Gigantamax)', t:['electric']},
   {name:'Raikou', t:['electric']},
   {name:'Rayquaza', t:['dragon','flying']},
   {name:'Regice', t:['ice']},
@@ -478,19 +475,23 @@ const POKEMON_LIST = [
   {name:'Regirock', t:['rock']},
   {name:'Registeel', t:['steel']},
   {name:'Reshiram', t:['dragon','fire']},
-  {name:'Rillaboom (Gigantamax)', t:['grass']},
-  // S
-  {name:'Sandaconda (Gigantamax)', t:['ground']},
-  {name:'Shaymin (Land)', t:['grass']},
+  {name:'Rillaboom', t:['grass']},
+  {name:'Sableye (Mega)', t:['dark','ghost']},
+  {name:'Salamence (Mega)', t:['dragon','flying']},
+  {name:'Sandaconda', t:['ground']},
+  {name:'Sceptile (Mega)', t:['grass','dragon']},
+  {name:'Scizor (Mega)', t:['bug','steel']},
+  {name:'Shaymin', t:['grass']},
   {name:'Shaymin (Sky)', t:['grass','flying']},
   {name:'Silvally', t:['normal']},
-  {name:'Snorlax (Gigantamax)', t:['normal']},
+  {name:'Slowbro (Mega)', t:['water','psychic']},
+  {name:'Snorlax', t:['normal']},
   {name:'Solgaleo', t:['psychic','steel']},
   {name:'Spectrier', t:['ghost']},
   {name:'Stakataka', t:['rock','steel']},
+  {name:'Steelix (Mega)', t:['steel','ground']},
   {name:'Suicune', t:['water']},
-  {name:'Swampert (Gigantamax)', t:['water','ground']},
-  // T
+  {name:'Swampert', t:['water','ground']},
   {name:'Tapu Bulu', t:['grass','fairy']},
   {name:'Tapu Fini', t:['water','fairy']},
   {name:'Tapu Koko', t:['electric','fairy']},
@@ -498,29 +499,22 @@ const POKEMON_LIST = [
   {name:'Terapagos', t:['normal']},
   {name:'Terrakion', t:['rock','fighting']},
   {name:'Thundurus', t:['electric','flying']},
-  {name:'Thundurus (Therian)', t:['electric','flying']},
   {name:'Ting-Lu', t:['dark','ground']},
   {name:'Togekiss', t:['fairy','flying']},
   {name:'Tornadus', t:['flying']},
-  {name:'Tornadus (Therian)', t:['flying']},
-  {name:'Toxtricity (Gigantamax)', t:['electric','poison']},
-  // U
+  {name:'Toxtricity', t:['electric','poison']},
+  {name:'Tyranitar (Mega)', t:['rock','dark']},
   {name:'Urshifu (Rapid Strike)', t:['fighting','water']},
   {name:'Urshifu (Single Strike)', t:['fighting','dark']},
   {name:'Uxie', t:['psychic']},
-  // V
-  {name:'Venusaur (Gigantamax)', t:['grass','poison']},
+  {name:'Venusaur', t:['grass','poison']},
   {name:'Victini', t:['psychic','fire']},
   {name:'Virizion', t:['grass','fighting']},
   {name:'Volcanion', t:['fire','water']},
-  // W
   {name:'Wo-Chien', t:['dark','grass']},
-  // X
   {name:'Xerneas', t:['fairy']},
   {name:'Xurkitree', t:['electric']},
-  // Y
   {name:'Yveltal', t:['dark','flying']},
-  // Z
   {name:'Zacian', t:['fairy']},
   {name:'Zacian (Crowned Sword)', t:['fairy','steel']},
   {name:'Zamazenta', t:['fighting']},
@@ -531,60 +525,9 @@ const POKEMON_LIST = [
   {name:'Zekrom', t:['dragon','electric']},
   {name:'Zeraora', t:['electric']},
   {name:'Zygarde', t:['dragon','ground']},
-
-  // ===== MEGAS (only where typing differs from base) =====
-  {name:'Abomasnow Mega (Grass/Ice)', t:['grass','ice']},
-  {name:'Absol Mega (Dark)', t:['dark']},
-  {name:'Aerodactyl Mega (Rock/Flying)', t:['rock','flying']},
-  {name:'Aggron Mega (Steel)', t:['steel']},          // base is Steel/Rock → Mega drops Rock
-  {name:'Alakazam Mega (Psychic)', t:['psychic']},
-  {name:'Altaria Mega (Dragon/Fairy)', t:['dragon','fairy']},  // base Dragon/Flying
-  {name:'Ampharos Mega (Electric/Dragon)', t:['electric','dragon']}, // base Electric
-  {name:'Audino Mega (Normal/Fairy)', t:['normal','fairy']},   // base Normal
-  {name:'Banette Mega (Ghost)', t:['ghost']},
-  {name:'Beedrill Mega (Bug/Poison)', t:['bug','poison']},
-  {name:'Blastoise Mega (Water)', t:['water']},
-  {name:'Blaziken Mega (Fire/Fighting)', t:['fire','fighting']},
-  {name:'Camerupt Mega (Fire/Ground)', t:['fire','ground']},   // base Fire/Ground same
-  {name:'Charizard Mega X (Fire/Dragon)', t:['fire','dragon']}, // base Fire/Flying
-  {name:'Charizard Mega Y (Fire/Flying)', t:['fire','flying']},
-  {name:'Diancie Mega (Rock/Fairy)', t:['rock','fairy']},
-  {name:'Gallade Mega (Psychic/Fighting)', t:['psychic','fighting']},
-  {name:'Garchomp Mega (Dragon/Ground)', t:['dragon','ground']},
-  {name:'Gardevoir Mega (Psychic/Fairy)', t:['psychic','fairy']},
-  {name:'Gengar Mega (Ghost/Poison)', t:['ghost','poison']},
-  {name:'Glalie Mega (Ice)', t:['ice']},
-  {name:'Gyarados Mega (Water/Dark)', t:['water','dark']},     // base Water/Flying
-  {name:'Heracross Mega (Bug/Fighting)', t:['bug','fighting']},
-  {name:'Houndoom Mega (Dark/Fire)', t:['dark','fire']},
-  {name:'Kangaskhan Mega (Normal)', t:['normal']},
-  {name:'Latias Mega (Dragon/Psychic)', t:['dragon','psychic']},
-  {name:'Latios Mega (Dragon/Psychic)', t:['dragon','psychic']},
-  {name:'Lopunny Mega (Normal/Fighting)', t:['normal','fighting']}, // base Normal
-  {name:'Lucario Mega (Fighting/Steel)', t:['fighting','steel']},
-  {name:'Manectric Mega (Electric)', t:['electric']},
-  {name:'Mawile Mega (Steel/Fairy)', t:['steel','fairy']},     // base Steel/Fairy same
-  {name:'Medicham Mega (Fighting/Psychic)', t:['fighting','psychic']},
-  {name:'Metagross Mega (Steel/Psychic)', t:['steel','psychic']},
-  {name:'Mewtwo Mega X (Psychic/Fighting)', t:['psychic','fighting']}, // base Psychic
-  {name:'Mewtwo Mega Y (Psychic)', t:['psychic']},
-  {name:'Pidgeot Mega (Normal/Flying)', t:['normal','flying']},
-  {name:'Pinsir Mega (Bug/Flying)', t:['bug','flying']},       // base Bug
-  {name:'Rayquaza Mega (Dragon/Flying)', t:['dragon','flying']},
-  {name:'Sableye Mega (Dark/Ghost)', t:['dark','ghost']},
-  {name:'Salamence Mega (Dragon/Flying)', t:['dragon','flying']},
-  {name:'Sceptile Mega (Grass/Dragon)', t:['grass','dragon']}, // base Grass
-  {name:'Scizor Mega (Bug/Steel)', t:['bug','steel']},
-  {name:'Sharpedo Mega (Water/Dark)', t:['water','dark']},     // base Water/Dark same
-  {name:'Slowbro Mega (Water/Psychic)', t:['water','psychic']},
-  {name:'Steelix Mega (Steel/Ground)', t:['steel','ground']},
-  {name:'Swampert Mega (Water/Ground)', t:['water','ground']},
-  {name:'Tyranitar Mega (Rock/Dark)', t:['rock','dark']},
-  {name:'Venusaur Mega (Grass/Poison)', t:['grass','poison']},
 ].sort((a,b) => a.name.localeCompare(b.name));
 
-// Deduplicate: remove entries where another entry has identical sorted types
-// Keep the first (alphabetically earliest) name for each unique type combo
+// Deduplicate by type signature, keep earliest alpha name
 const seen = new Map();
 POKEMON_LIST.forEach(p => {
   const key = [...p.t].sort().join(',');
@@ -652,7 +595,7 @@ const typeColors = {
 // ===== STATE =====
 let selectedTypes = [];
 let mode = 'both'; // 'both' or 'superonly'
-let generatedStrings = ['','',''];
+let generatedStrings = ['','','',''];
 
 // ===== BUILD UI =====
 const grid = document.getElementById('typeGrid');
@@ -692,7 +635,7 @@ function reset() {
   updateSelectedDisplay();
   generatedStrings = ['','',''];
   document.getElementById('pkmnSelect').value = '';
-  ['outCard1','outCard2','outCard3'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['outCard1','outCard2','outCard3','outCard4'].forEach(id => document.getElementById(id).classList.remove('visible'));
 }
 
 // ===== CALCULATE EFFECTIVENESS =====
@@ -755,6 +698,7 @@ function generate() {
   generatedStrings[0] = s1;
   generatedStrings[1] = s2;
   generatedStrings[2] = '';
+  generatedStrings[3] = '';
 
   // Show super effective output only if there are results
   const card1 = document.getElementById('outCard1');
@@ -813,6 +757,21 @@ function generate() {
     document.getElementById('outString3').textContent = optimalStr;
   } else {
     card3.classList.remove('visible');
+  }
+
+  // ===== DYNAMAX DEFENSIVE: Pokemon that resist the boss's STAB moves =====
+  // Only type-based, no move filter — for tanking the defensive phase
+  const card4 = document.getElementById('outCard4');
+  if (resistTypes.length > 0) {
+    card4.classList.add('visible');
+    document.getElementById('outTypes4').innerHTML = resistTypes.map(t =>
+      `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
+    ).join('');
+    const dynStr = resistTypes.map(t => `@${searchNames[t]}`).join(',');
+    generatedStrings[3] = dynStr;
+    document.getElementById('outString4').textContent = dynStr;
+  } else {
+    card4.classList.remove('visible');
   }
 
   // Scroll to output
