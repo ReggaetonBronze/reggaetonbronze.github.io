@@ -367,15 +367,15 @@ const ALL_TYPES = ['fighting','fire','ground','electric','rock','bug','grass','i
 const POKEMON_LIST = [
   {name:'Abomasnow', t:['grass','ice']},
   {name:'Aerodactyl', t:['rock','flying']},
-  {name:'Aggron (Mega)', t:['steel']},
+  {name:'Aggron', t:['steel']},
   {name:'Alakazam', t:['psychic']},
-  {name:'Altaria (Mega)', t:['dragon','fairy']},
-  {name:'Ampharos (Mega)', t:['electric','dragon']},
+  {name:'Altaria', t:['dragon','fairy']},
+  {name:'Ampharos', t:['electric','dragon']},
   {name:'Appletun', t:['grass','dragon']},
   {name:'Arceus', t:['normal']},
   {name:'Articuno', t:['ice','flying']},
   {name:'Articuno (Galarian)', t:['psychic','flying']},
-  {name:'Audino (Mega)', t:['normal','fairy']},
+  {name:'Audino', t:['normal','fairy']},
   {name:'Azelf', t:['psychic']},
   {name:'Banette', t:['ghost']},
   {name:'Beedrill', t:['bug','poison']},
@@ -408,10 +408,10 @@ const POKEMON_LIST = [
   {name:'Eternatus', t:['poison','dragon']},
   {name:'Fezandipiti', t:['poison','fairy']},
   {name:'Flapple', t:['grass','dragon']},
-  {name:'Gallade (Mega)', t:['psychic','fighting']},
+  {name:'Gallade', t:['psychic','fighting']},
   {name:'Garbodor', t:['poison']},
-  {name:'Garchomp (Mega)', t:['dragon','ground']},
-  {name:'Gardevoir (Mega)', t:['psychic','fairy']},
+  {name:'Garchomp', t:['dragon','ground']},
+  {name:'Gardevoir', t:['psychic','fairy']},
   {name:'Genesect', t:['bug','steel']},
   {name:'Gengar', t:['ghost','poison']},
   {name:'Giratina', t:['ghost','dragon']},
@@ -422,14 +422,14 @@ const POKEMON_LIST = [
   {name:'Groudon', t:['ground']},
   {name:'Groudon (Primal)', t:['ground','fire']},
   {name:'Guzzlord', t:['dark','dragon']},
-  {name:'Gyarados (Mega)', t:['water','dark']},
+  {name:'Gyarados', t:['water','dark']},
   {name:'Hatterene', t:['psychic','fairy']},
   {name:'Heatran', t:['fire','steel']},
   {name:'Heracross', t:['bug','fighting']},
   {name:'Ho-Oh', t:['fire','flying']},
   {name:'Hoopa (Confined)', t:['psychic','ghost']},
   {name:'Hoopa (Unbound)', t:['psychic','dark']},
-  {name:'Houndoom (Mega)', t:['dark','fire']},
+  {name:'Houndoom', t:['dark','fire']},
   {name:'Inteleon', t:['water']},
   {name:'Jirachi', t:['steel','psychic']},
   {name:'Kangaskhan', t:['normal']},
@@ -443,8 +443,8 @@ const POKEMON_LIST = [
   {name:'Landorus', t:['ground','flying']},
   {name:'Latias', t:['dragon','psychic']},
   {name:'Latios', t:['dragon','psychic']},
-  {name:'Lopunny (Mega)', t:['normal','fighting']},
-  {name:'Lucario (Mega)', t:['fighting','steel']},
+  {name:'Lopunny', t:['normal','fighting']},
+  {name:'Lucario', t:['fighting','steel']},
   {name:'Lugia', t:['psychic','flying']},
   {name:'Lunala', t:['psychic','ghost']},
   {name:'Magearna', t:['steel','fairy']},
@@ -477,7 +477,7 @@ const POKEMON_LIST = [
   {name:'Pheromosa', t:['bug','fighting']},
   {name:'Phione', t:['water']},
   {name:'Pikachu', t:['electric']},
-  {name:'Pinsir (Mega)', t:['bug','flying']},
+  {name:'Pinsir', t:['bug','flying']},
   {name:'Poipole', t:['poison']},
   {name:'Raikou', t:['electric']},
   {name:'Rayquaza', t:['dragon','flying']},
@@ -489,20 +489,20 @@ const POKEMON_LIST = [
   {name:'Registeel', t:['steel']},
   {name:'Reshiram', t:['dragon','fire']},
   {name:'Rillaboom', t:['grass']},
-  {name:'Sableye (Mega)', t:['dark','ghost']},
-  {name:'Salamence (Mega)', t:['dragon','flying']},
+  {name:'Sableye', t:['dark','ghost']},
+  {name:'Salamence', t:['dragon','flying']},
   {name:'Sandaconda', t:['ground']},
-  {name:'Sceptile (Mega)', t:['grass','dragon']},
-  {name:'Scizor (Mega)', t:['bug','steel']},
+  {name:'Sceptile', t:['grass','dragon']},
+  {name:'Scizor', t:['bug','steel']},
   {name:'Shaymin', t:['grass']},
   {name:'Shaymin (Sky)', t:['grass','flying']},
   {name:'Silvally', t:['normal']},
-  {name:'Slowbro (Mega)', t:['water','psychic']},
+  {name:'Slowbro', t:['water','psychic']},
   {name:'Snorlax', t:['normal']},
   {name:'Solgaleo', t:['psychic','steel']},
   {name:'Spectrier', t:['ghost']},
   {name:'Stakataka', t:['rock','steel']},
-  {name:'Steelix (Mega)', t:['steel','ground']},
+  {name:'Steelix', t:['steel','ground']},
   {name:'Suicune', t:['water']},
   {name:'Swampert', t:['water','ground']},
   {name:'Tapu Bulu', t:['grass','fairy']},
@@ -540,17 +540,9 @@ const POKEMON_LIST = [
   {name:'Zygarde', t:['dragon','ground']},
 ].sort((a,b) => a.name.localeCompare(b.name));
 
-// Deduplicate by type signature, keep earliest alpha name
-const seen = new Map();
-POKEMON_LIST.forEach(p => {
-  const key = [...p.t].sort().join(',');
-  if (!seen.has(key)) seen.set(key, p);
-});
-const DEDUPED_LIST = Array.from(seen.values()).sort((a,b) => a.name.localeCompare(b.name));
-
 // Populate dropdown
 const sel = document.getElementById('pkmnSelect');
-DEDUPED_LIST.forEach((p, i) => {
+POKEMON_LIST.forEach((p, i) => {
   const opt = document.createElement('option');
   opt.value = i;
   opt.textContent = p.name;
@@ -559,7 +551,7 @@ DEDUPED_LIST.forEach((p, i) => {
 
 function pkmnSelected(selectEl) {
   if (selectEl.value === '') return;
-  const pkmn = DEDUPED_LIST[parseInt(selectEl.value)];
+  const pkmn = POKEMON_LIST[parseInt(selectEl.value)];
   selectedTypes = [...pkmn.t];
   updateSelectedDisplay();
 }
