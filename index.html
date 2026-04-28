@@ -18,11 +18,24 @@
     --output-bg: #0a0c10;
 
     /* Type colors */
-    --bug: #8fbc45; --dark: #5b5168; --dragon: #6b50de; --electric: #f6c831;
-    --fairy: #ef80e0; --fighting: #c2452c; --fire: #f4631e; --flying: #97aee3;
-    --ghost: #6156a6; --grass: #62bb5b; --ground: #d97c3a; --ice: #76cec0;
-    --normal: #e8e8e8; --poison: #b85db1; --psychic: #f76b8b; --rock: #c9bc74;
-    --steel: #9ab8ce; --water: #538ee3;
+    --bug: #8cb230;
+    --dark: #58575f;
+    --dragon: #0f6ac0;
+    --electric: #eed535;
+    --fairy: #ed6ec7;
+    --fighting: #c12239;
+    --fire: #fd7d24;
+    --flying: #748fc9;
+    --ghost: #556aae;
+    --grass: #5db025;
+    --ground: #d3a343;
+    --ice: #61cec0;
+    --normal: #9da0aa;
+    --poison: #a552cc;
+    --psychic: #ea5c8e;
+    --rock: #b69e31;
+    --steel: #417d9a;
+    --water: #4a90d9;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -132,24 +145,24 @@
   .type-btn[data-type="steel"]    { color: var(--steel); }
   .type-btn[data-type="water"]    { color: var(--water); }
 
-  .type-btn.active[data-type="bug"]      { background: rgba(143,188,69,0.12); }
-  .type-btn.active[data-type="dark"]     { background: rgba(91,81,104,0.2); }
-  .type-btn.active[data-type="dragon"]   { background: rgba(107,80,222,0.15); }
-  .type-btn.active[data-type="electric"] { background: rgba(246,200,49,0.12); }
-  .type-btn.active[data-type="fairy"]    { background: rgba(239,128,224,0.12); }
-  .type-btn.active[data-type="fighting"] { background: rgba(194,69,44,0.15); }
-  .type-btn.active[data-type="fire"]     { background: rgba(244,99,30,0.15); }
-  .type-btn.active[data-type="flying"]   { background: rgba(151,174,227,0.12); }
-  .type-btn.active[data-type="ghost"]    { background: rgba(97,86,166,0.15); }
-  .type-btn.active[data-type="grass"]    { background: rgba(98,187,91,0.12); }
-  .type-btn.active[data-type="ground"]   { background: rgba(217,124,58,0.15); }
-  .type-btn.active[data-type="ice"]      { background: rgba(118,206,192,0.12); }
-  .type-btn.active[data-type="normal"]   { background: rgba(154,154,142,0.12); }
-  .type-btn.active[data-type="poison"]   { background: rgba(184,93,177,0.12); }
-  .type-btn.active[data-type="psychic"]  { background: rgba(247,107,139,0.12); }
-  .type-btn.active[data-type="rock"]     { background: rgba(201,188,116,0.12); }
-  .type-btn.active[data-type="steel"]    { background: rgba(154,184,206,0.12); }
-  .type-btn.active[data-type="water"]    { background: rgba(83,142,227,0.12); }
+  .type-btn.active[data-type="bug"]      { background: rgba(140,178,48,0.2); }
+  .type-btn.active[data-type="dark"]     { background: rgba(88,87,95,0.25); }
+  .type-btn.active[data-type="dragon"]   { background: rgba(15,106,192,0.2); }
+  .type-btn.active[data-type="electric"] { background: rgba(238,213,53,0.2); }
+  .type-btn.active[data-type="fairy"]    { background: rgba(237,110,199,0.2); }
+  .type-btn.active[data-type="fighting"] { background: rgba(193,34,57,0.2); }
+  .type-btn.active[data-type="fire"]     { background: rgba(253,125,36,0.2); }
+  .type-btn.active[data-type="flying"]   { background: rgba(116,143,201,0.2); }
+  .type-btn.active[data-type="ghost"]    { background: rgba(85,106,174,0.2); }
+  .type-btn.active[data-type="grass"]    { background: rgba(93,176,37,0.2); }
+  .type-btn.active[data-type="ground"]   { background: rgba(211,163,67,0.2); }
+  .type-btn.active[data-type="ice"]      { background: rgba(97,206,192,0.2); }
+  .type-btn.active[data-type="normal"]   { background: rgba(157,160,170,0.2); }
+  .type-btn.active[data-type="poison"]   { background: rgba(165,82,204,0.2); }
+  .type-btn.active[data-type="psychic"]  { background: rgba(234,92,142,0.2); }
+  .type-btn.active[data-type="rock"]     { background: rgba(182,158,49,0.2); }
+  .type-btn.active[data-type="steel"]    { background: rgba(65,125,154,0.2); }
+  .type-btn.active[data-type="water"]    { background: rgba(74,144,217,0.2); }
 
   .selected-display {
     display: flex;
@@ -586,10 +599,10 @@ const searchNames = {
 
 // TYPE COLORS for tags
 const typeColors = {
-  bug:'#8fbc45',dark:'#8a7fa8',dragon:'#7b6de8',electric:'#f6c831',fairy:'#ef80e0',
-  fighting:'#c2452c',fire:'#f4631e',flying:'#97aee3',ghost:'#6156a6',grass:'#62bb5b',
-  ground:'#d97c3a',ice:'#76cec0',normal:'#9a9a8e',poison:'#b85db1',psychic:'#f76b8b',
-  rock:'#c9bc74',steel:'#9ab8ce',water:'#538ee3'
+  bug:'#8cb230',dark:'#58575f',dragon:'#0f6ac0',electric:'#eed535',fairy:'#ed6ec7',
+  fighting:'#c12239',fire:'#fd7d24',flying:'#748fc9',ghost:'#556aae',grass:'#5db025',
+  ground:'#d3a343',ice:'#61cec0',normal:'#9da0aa',poison:'#a552cc',psychic:'#ea5c8e',
+  rock:'#b69e31',steel:'#417d9a',water:'#4a90d9'
 };
 
 // ===== STATE =====
