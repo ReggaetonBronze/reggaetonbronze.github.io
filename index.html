@@ -683,6 +683,7 @@ function generate() {
   const buildString = (types) => {
     if (types.length === 0) return '(none)';
     return [
+      types.map(t => `@1${searchNames[t]}`).join(','),
       types.map(t => `@2${searchNames[t]}`).join(','),
       types.map(t => `@3${searchNames[t]}`).join(',')
     ].join(',') + '&';
