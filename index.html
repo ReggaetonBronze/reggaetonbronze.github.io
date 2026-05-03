@@ -343,20 +343,12 @@
   <button class="copy-btn" onclick="copyString(2)">Copy to Clipboard</button>
 </div>
 
-<!-- OUTPUT CARD: OPTIMAL -->
+<!-- OUTPUT CARD: ROCKET GRUNTS -->
 <div class="output-card" id="outCard3">
-  <div class="output-title" id="outTitle3"></div>
+  <div class="output-title">Rocket Grunts (Fast Moves)</div>
   <div class="output-types" id="outTypes3"></div>
   <div class="output-string" id="outString3"></div>
   <button class="copy-btn" onclick="copyString(3)">Copy to Clipboard</button>
-</div>
-
-<!-- OUTPUT CARD: DYNAMAX DEFENSIVE -->
-<div class="output-card" id="outCard4">
-  <div class="output-title">Dynamax Defensive Phase</div>
-  <div class="output-types" id="outTypes4"></div>
-  <div class="output-string" id="outString4"></div>
-  <button class="copy-btn" onclick="copyString(4)">Copy to Clipboard</button>
 </div>
 
 <script>
@@ -600,7 +592,7 @@ const typeColors = {
 // ===== STATE =====
 let selectedTypes = [];
 let mode = 'both'; // 'both' or 'superonly'
-let generatedStrings = ['','','',''];
+let generatedStrings = ['','',''];
 
 // ===== BUILD UI =====
 const grid = document.getElementById('typeGrid');
@@ -640,7 +632,7 @@ function reset() {
   updateSelectedDisplay();
   generatedStrings = ['','',''];
   document.getElementById('pkmnSelect').value = '';
-  ['outCard1','outCard2','outCard3','outCard4'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['outCard1','outCard2','outCard3'].forEach(id => document.getElementById(id).classList.remove('visible'));
 }
 
 // ===== CALCULATE EFFECTIVENESS =====
@@ -691,19 +683,23 @@ function generate() {
   const buildString = (types) => {
     if (types.length === 0) return '(none)';
     return [
-      types.map(t => `@1${searchNames[t]}`).join(','),
       types.map(t => `@2${searchNames[t]}`).join(','),
       types.map(t => `@3${searchNames[t]}`).join(',')
-    ].join(',');
+    ].join(',') + '&';
+  };
+
+  const buildFastString = (types) => {
+    if (types.length === 0) return '(none)';
+    return types.map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
   };
 
   const s1 = buildString(superEff);
   const s2 = effective.length > 0 ? buildString(effective) : '';
+  const sRocket = buildFastString(effective.length > 0 ? effective : superEff);
 
   generatedStrings[0] = s1;
   generatedStrings[1] = s2;
-  generatedStrings[2] = '';
-  generatedStrings[3] = '';
+  generatedStrings[2] = sRocket;
 
   // Show super effective output only if there are results
   const card1 = document.getElementById('outCard1');
@@ -719,9 +715,9 @@ function generate() {
     card1.classList.remove('visible');
   }
 
-  // Show effective output if mode=both and dual type
+  // Show effective output if dual type
   const card2 = document.getElementById('outCard2');
-  if (mode === 'both' && defTypes.length === 2 && effective.length > 0) {
+  if (defTypes.length === 2 && effective.length > 0) {
     card2.classList.add('visible');
     document.getElementById('outTitle2').textContent = 'Effective (1.6×)';
     document.getElementById('outTypes2').innerHTML = effective.map(t =>
@@ -732,51 +728,17 @@ function generate() {
     card2.classList.remove('visible');
   }
 
-  // ===== OPTIMAL: effective moves AND resists defender types =====
-  // A pokemon type qualifies if it resists at least one defender type
-  // and is NOT 2x weak to any defender type
-  const resistTypes = ALL_TYPES.filter(pokeType => {
-    let resistsAtLeastOne = false;
-    let doubleWeak = false;
-    defTypes.forEach(defType => {
-      // chart[defType][pokeType] = damage multiplier when defType attacks pokeType
-      const dmg = chart[defType]?.[pokeType] ?? 1;
-      const pogoDmg = dmg === 0 ? 0.39 : dmg;
-      if (pogoDmg <= 0.625) resistsAtLeastOne = true;
-      if (pogoDmg >= 2) doubleWeak = true;
-    });
-    return resistsAtLeastOne && !doubleWeak;
-  });
-
+  // Rocket grunts — fast moves only
   const card3 = document.getElementById('outCard3');
-  const moveStr = effective.length > 0 ? s2 : s1; // use broadest move set
-  if (resistTypes.length > 0 && moveStr !== '(none)') {
+  const rocketTypes = effective.length > 0 ? effective : superEff;
+  if (rocketTypes.length > 0) {
     card3.classList.add('visible');
-    document.getElementById('outTitle3').textContent = 'Optimal Attackers (effective moves + bulk)';
-    document.getElementById('outTypes3').innerHTML = resistTypes.map(t =>
+    document.getElementById('outTypes3').innerHTML = rocketTypes.map(t =>
       `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
     ).join('');
-    const resistStr = resistTypes.map(t => `@${searchNames[t]}`).join(',');
-    const optimalStr = `(${moveStr})&(${resistStr})`;
-    generatedStrings[2] = optimalStr;
-    document.getElementById('outString3').textContent = optimalStr;
+    document.getElementById('outString3').textContent = sRocket;
   } else {
     card3.classList.remove('visible');
-  }
-
-  // ===== DYNAMAX DEFENSIVE: Pokemon that resist the boss's STAB moves =====
-  // Only type-based, no move filter — for tanking the defensive phase
-  const card4 = document.getElementById('outCard4');
-  if (resistTypes.length > 0) {
-    card4.classList.add('visible');
-    document.getElementById('outTypes4').innerHTML = resistTypes.map(t =>
-      `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
-    ).join('');
-    const dynStr = resistTypes.map(t => `@${searchNames[t]}`).join(',');
-    generatedStrings[3] = dynStr;
-    document.getElementById('outString4').textContent = dynStr;
-  } else {
-    card4.classList.remove('visible');
   }
 
   // Scroll to output
