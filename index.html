@@ -51,7 +51,6 @@
     padding: 2rem 1rem 4rem;
   }
 
-  /* Scanline overlay */
   body::before {
     content: '';
     position: fixed;
@@ -96,7 +95,6 @@
     background: var(--border);
   }
 
-  /* Type grid */
   .type-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -125,7 +123,6 @@
     box-shadow: 0 0 12px currentColor;
   }
 
-  /* Assign type colors */
   .type-btn[data-type="bug"]      { color: var(--bug); }
   .type-btn[data-type="dark"]     { color: var(--dark); }
   .type-btn[data-type="dragon"]   { color: var(--dragon); }
@@ -190,7 +187,6 @@
     font-style: italic;
   }
 
-  /* Mode toggle */
   .mode-row {
     display: flex;
     gap: 0.5rem;
@@ -215,7 +211,6 @@
     background: rgba(247,201,72,0.08);
   }
 
-  /* GO button */
   .go-btn {
     display: block;
     width: 100%;
@@ -237,7 +232,6 @@
   .go-btn:hover { background: #3aa8e0; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(42,143,196,0.3); }
   .go-btn:active { transform: translateY(0); }
 
-  /* Output */
   .output-card {
     background: var(--output-bg);
     border: 1px solid var(--border);
@@ -354,6 +348,30 @@
 <script>
 // ===== TYPE DATA =====
 const ALL_TYPES = ['fighting','fire','ground','electric','rock','bug','grass','ice','steel','flying','water','dragon','ghost','poison','fairy','psychic','dark','normal'];
+
+// ===== TIER WEIGHTS =====
+// Derived from top-100 attackers (S + A+ + A tiers), counting occurrences per type
+// Higher = more top-tier Pokémon use this type → floats to top of search results
+const TYPE_WEIGHT = {
+  dragon:   27,
+  fire:     19,
+  psychic:  17,
+  flying:   14,
+  fighting: 13,
+  ground:   13,
+  steel:    12,
+  rock:     11,
+  electric: 11,
+  dark:      9,
+  ghost:     8,
+  water:     7,
+  ice:       4,
+  fairy:     4,
+  bug:       3,
+  poison:    2,
+  grass:     2,
+  normal:    1
+};
 
 // ===== POKEMON DATA =====
 const POKEMON_LIST = [
@@ -548,10 +566,6 @@ function pkmnSelected(selectEl) {
   updateSelectedDisplay();
 }
 
-// effectivenessTable[attacking][defending] = multiplier
-// Simplified: using standard Gen 6+ chart, ignoring immunities for PoGo (PoGo has no 0x, uses 0.39x instead)
-// We represent effectiveness as: 2=super (2x), 1=normal (1x), 0.5=not very (0.5x)
-// For dual types the multipliers stack.
 const chart = {
   bug:      {dark:2,fairy:0.5,fighting:0.5,fire:0.5,flying:0.5,ghost:0.5,grass:2,ground:1,ice:1,normal:1,poison:0.5,psychic:2,rock:1,steel:0.5,water:1,bug:1,dragon:1,electric:1},
   dark:     {dark:0.5,fairy:0.5,fighting:0.5,ghost:2,psychic:2,bug:1,dragon:1,electric:1,fire:1,flying:1,grass:1,ground:1,ice:1,normal:1,poison:1,rock:1,steel:1,water:1},
@@ -559,7 +573,7 @@ const chart = {
   electric: {dragon:0.5,electric:0.5,flying:2,grass:0.5,ground:0,water:2,bug:1,dark:1,fairy:1,fighting:1,fire:1,ghost:1,ice:1,normal:1,poison:1,psychic:1,rock:1,steel:1},
   fairy:    {dark:2,dragon:2,fighting:2,fire:0.5,poison:0.5,steel:0.5,bug:1,electric:1,fairy:1,flying:1,ghost:1,grass:1,ground:1,ice:1,normal:1,psychic:1,rock:1,water:1},
   fighting: {bug:0.5,dark:2,fairy:0.5,flying:0.5,ghost:0,ice:2,normal:2,poison:0.5,psychic:0.5,rock:2,steel:2,dragon:1,electric:1,fighting:1,fire:1,grass:1,ground:1,water:1},
-  fire:     {bug:2,fairy:1,grass:2,ice:2,rock:0.5,steel:2,water:0.5,dragon:0.5,fire:0.5,bug:2,dark:1,electric:1,fighting:1,flying:1,ghost:1,ground:1,normal:1,poison:1,psychic:1},
+  fire:     {bug:2,fairy:1,grass:2,ice:2,rock:0.5,steel:2,water:0.5,dragon:0.5,fire:0.5,dark:1,electric:1,fighting:1,flying:1,ghost:1,ground:1,normal:1,poison:1,psychic:1},
   flying:   {bug:2,electric:0.5,fighting:2,grass:2,ground:1,rock:0.5,steel:0.5,dark:1,dragon:1,fairy:1,fire:1,flying:1,ghost:1,ice:1,normal:1,poison:1,psychic:1,water:1},
   ghost:    {dark:0.5,ghost:2,normal:0,psychic:2,bug:1,dragon:1,electric:1,fairy:1,fighting:1,fire:1,flying:1,grass:1,ground:1,ice:1,poison:1,rock:1,steel:1,water:1},
   grass:    {bug:0.5,dark:1,dragon:0.5,electric:0.5,fairy:1,fighting:1,fire:0.5,flying:0.5,ghost:1,grass:0.5,ground:2,ice:1,normal:1,poison:0.5,psychic:1,rock:2,steel:0.5,water:2},
@@ -573,7 +587,6 @@ const chart = {
   water:    {bug:1,dark:1,dragon:0.5,electric:1,fairy:1,fighting:1,fire:2,flying:1,ghost:1,grass:0.5,ground:2,ice:1,normal:1,poison:1,psychic:1,rock:2,steel:1,water:0.5},
 };
 
-// Pokemon GO search string type names (English)
 const searchNames = {
   bug:'bug',dark:'dark',dragon:'dragon',electric:'electric',fairy:'fairy',
   fighting:'fighting',fire:'fire',flying:'flying',ghost:'ghost',grass:'grass',
@@ -581,7 +594,6 @@ const searchNames = {
   rock:'rock',steel:'steel',water:'water'
 };
 
-// TYPE COLORS for tags
 const typeColors = {
   bug:'#8cb230',dark:'#58575f',dragon:'#0f6ac0',electric:'#eed535',fairy:'#ed6ec7',
   fighting:'#c12239',fire:'#fd7d24',flying:'#748fc9',ghost:'#4a3f9f',grass:'#5db025',
@@ -591,7 +603,7 @@ const typeColors = {
 
 // ===== STATE =====
 let selectedTypes = [];
-let mode = 'both'; // 'both' or 'superonly'
+let mode = 'both';
 let generatedStrings = ['','',''];
 
 // ===== BUILD UI =====
@@ -635,16 +647,18 @@ function reset() {
   ['outCard1','outCard2','outCard3'].forEach(id => document.getElementById(id).classList.remove('visible'));
 }
 
-// ===== CALCULATE EFFECTIVENESS =====
 function getEffectiveness(attackType, defTypes) {
-  // In PoGo, 0x (immune) becomes 0.39x — but for search string purposes we include it
-  // We treat 0 as still "technically hits" — include in not very effective
   let mult = 1;
   defTypes.forEach(dt => {
     const m = chart[attackType]?.[dt] ?? 1;
-    mult *= (m === 0 ? 0.39 : m); // PoGo immunity workaround
+    mult *= (m === 0 ? 0.39 : m);
   });
   return mult;
+}
+
+// Sort types by tier weight descending
+function sortByWeight(types) {
+  return [...types].sort((a, b) => (TYPE_WEIGHT[b] || 0) - (TYPE_WEIGHT[a] || 0));
 }
 
 function generate() {
@@ -660,55 +674,47 @@ function generate() {
   ALL_TYPES.forEach(atk => {
     const mult = getEffectiveness(atk, defTypes);
     if (defTypes.length === 2) {
-      // dual: 4x = super (2*2), 2x = effective if mode=both
       if (mult >= 3.9) superEff.push(atk);
       if (mult >= 1.55 && mode === 'both') effective.push(atk);
     } else {
-      // mono: 2x = super, 1x = normal (skip), 0.5x = resist
       if (mult >= 1.9) superEff.push(atk);
-      // For mono there's no middle tier that makes sense for "effective"
-      // but we still show it if mode=both (same as PokeString)
     }
   });
 
-  // Build search strings (PoGo uses "attack:[type]" format)
-  // Actually PoGo search for type effectiveness isn't by attack type name —
-  // PokeString generates a string of Pokemon names filtered by type.
-  // The actual PoGo search string for "attacks that are effective" is:
-  // @attack-type-name (filters your pokemon by their attack type)
-  // e.g.  @fire&@rock means pokemon with fire OR rock fast/charged moves
-  // The correct format for PoGo is: @fire,@rock,@water
-  // (comma = OR in PoGo search)
+  // Sort both lists by tier weight before building strings
+  const sortedSuper = sortByWeight(superEff);
+  const sortedEffective = sortByWeight(effective);
 
   const buildString = (types) => {
     if (types.length === 0) return '(none)';
-    return [
-      types.map(t => `@1${searchNames[t]}`).join(','),
-      types.map(t => `@2${searchNames[t]}`).join(','),
-      types.map(t => `@3${searchNames[t]}`).join(',')
-    ].join(',') + '&';
+    // All tokens globally sorted by weight, interleaved across slots
+    const tokens = [
+      ...types.map(t => ({ slot: 1, type: t })),
+      ...types.map(t => ({ slot: 2, type: t })),
+      ...types.map(t => ({ slot: 3, type: t })),
+    ].sort((a, b) => (TYPE_WEIGHT[b.type] || 0) - (TYPE_WEIGHT[a.type] || 0));
+    return tokens.map(tok => `@${tok.slot}${searchNames[tok.type]}`).join(',') + '&';
   };
 
   const buildFastString = (types) => {
     if (types.length === 0) return '(none)';
-    return types.map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
+    return sortByWeight(types).map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
   };
 
-  const s1 = buildString(superEff);
-  const s2 = effective.length > 0 ? buildString(effective) : '';
-  const sRocket = buildFastString(effective.length > 0 ? effective : superEff);
+  const s1 = buildString(sortedSuper);
+  const s2 = sortedEffective.length > 0 ? buildString(sortedEffective) : '';
+  const sRocket = buildFastString(sortedEffective.length > 0 ? sortedEffective : sortedSuper);
 
   generatedStrings[0] = s1;
   generatedStrings[1] = s2;
   generatedStrings[2] = sRocket;
 
-  // Show super effective output only if there are results
   const card1 = document.getElementById('outCard1');
   if (superEff.length > 0) {
     card1.classList.add('visible');
     document.getElementById('outTitle1').textContent =
       defTypes.length === 2 ? 'Double Super Effective (4×)' : 'Super Effective (2×)';
-    document.getElementById('outTypes1').innerHTML = superEff.map(t =>
+    document.getElementById('outTypes1').innerHTML = sortedSuper.map(t =>
       `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
     ).join('');
     document.getElementById('outString1').textContent = s1;
@@ -716,12 +722,11 @@ function generate() {
     card1.classList.remove('visible');
   }
 
-  // Show effective output if dual type
   const card2 = document.getElementById('outCard2');
-  if (defTypes.length === 2 && effective.length > 0) {
+  if (defTypes.length === 2 && sortedEffective.length > 0) {
     card2.classList.add('visible');
     document.getElementById('outTitle2').textContent = 'Effective (1.6×)';
-    document.getElementById('outTypes2').innerHTML = effective.map(t =>
+    document.getElementById('outTypes2').innerHTML = sortedEffective.map(t =>
       `<span class="type-tag" style="color:${typeColors[t]};border-color:${typeColors[t]}">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`
     ).join('');
     document.getElementById('outString2').textContent = s2;
@@ -729,9 +734,8 @@ function generate() {
     card2.classList.remove('visible');
   }
 
-  // Rocket grunts — fast moves only
   const card3 = document.getElementById('outCard3');
-  const rocketTypes = effective.length > 0 ? effective : superEff;
+  const rocketTypes = sortedEffective.length > 0 ? sortedEffective : sortedSuper;
   if (rocketTypes.length > 0) {
     card3.classList.add('visible');
     document.getElementById('outTypes3').innerHTML = rocketTypes.map(t =>
@@ -742,7 +746,6 @@ function generate() {
     card3.classList.remove('visible');
   }
 
-  // Scroll to output
   card1.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
