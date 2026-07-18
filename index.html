@@ -6,7 +6,6 @@
 <title>Type Effectiveness</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inconsolata:wght@400;700&display=swap');
-
   :root {
     --bg: #0d0f14;
     --panel: #14171f;
@@ -16,7 +15,6 @@
     --text: #e8eaf0;
     --muted: #6b7280;
     --output-bg: #0a0c10;
-
     /* Type colors */
     --bug: #8cb230;
     --dark: #58575f;
@@ -37,9 +35,7 @@
     --steel: #417d9a;
     --water: #4a90d9;
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -50,7 +46,6 @@
     align-items: center;
     padding: 2rem 1rem 4rem;
   }
-
   body::before {
     content: '';
     position: fixed;
@@ -65,7 +60,6 @@
     pointer-events: none;
     z-index: 9999;
   }
-
   .card {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -75,7 +69,6 @@
     max-width: 680px;
     margin-bottom: 1rem;
   }
-
   .card-label {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -94,13 +87,11 @@
     height: 1px;
     background: var(--border);
   }
-
   .type-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 0.5rem;
   }
-
   .type-btn {
     padding: 0.6rem 0.5rem;
     border: 1px solid transparent;
@@ -122,7 +113,6 @@
     filter: brightness(1.15);
     box-shadow: 0 0 12px currentColor;
   }
-
   .type-btn[data-type="bug"]      { color: var(--bug); }
   .type-btn[data-type="dark"]     { color: var(--dark); }
   .type-btn[data-type="dragon"]   { color: var(--dragon); }
@@ -141,7 +131,6 @@
   .type-btn[data-type="rock"]     { color: var(--rock); }
   .type-btn[data-type="steel"]    { color: var(--steel); }
   .type-btn[data-type="water"]    { color: var(--water); }
-
   .type-btn.active[data-type="bug"]      { background: rgba(140,178,48,0.2); }
   .type-btn.active[data-type="dark"]     { background: rgba(88,87,95,0.25); }
   .type-btn.active[data-type="dragon"]   { background: rgba(15,106,192,0.2); }
@@ -160,7 +149,6 @@
   .type-btn.active[data-type="rock"]     { background: rgba(182,158,49,0.2); }
   .type-btn.active[data-type="steel"]    { background: rgba(65,125,154,0.2); }
   .type-btn.active[data-type="water"]    { background: rgba(74,144,217,0.2); }
-
   .selected-display {
     display: flex;
     gap: 0.5rem;
@@ -169,7 +157,6 @@
     min-height: 2rem;
     align-items: center;
   }
-
   .type-tag {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -180,20 +167,17 @@
     border-radius: 2px;
     border: 1px solid currentColor;
   }
-
   .none-selected {
     color: var(--muted);
     font-size: 0.8rem;
     font-style: italic;
   }
-
   .mode-row {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-top: 0.3rem;
   }
-
   .mode-btn {
     padding: 0.35rem 0.9rem;
     border: 1px solid var(--border);
@@ -210,7 +194,6 @@
     color: var(--accent);
     background: rgba(247,201,72,0.08);
   }
-
   .go-btn {
     display: block;
     width: 100%;
@@ -231,7 +214,6 @@
   }
   .go-btn:hover { background: #3aa8e0; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(42,143,196,0.3); }
   .go-btn:active { transform: translateY(0); }
-
   .output-card {
     background: var(--output-bg);
     border: 1px solid var(--border);
@@ -243,7 +225,6 @@
     display: none;
   }
   .output-card.visible { display: block; }
-
   .output-title {
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
@@ -253,7 +234,6 @@
     color: var(--accent);
     margin-bottom: 0.75rem;
   }
-
   .output-string {
     font-family: 'Inconsolata', monospace;
     font-size: 0.8rem;
@@ -266,14 +246,12 @@
     padding: 0.75rem;
     margin-bottom: 0.75rem;
   }
-
   .output-types {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
     margin-bottom: 0.75rem;
   }
-
   .copy-btn {
     padding: 0.4rem 1rem;
     border: 1px solid var(--accent2);
@@ -288,13 +266,11 @@
   }
   .copy-btn:hover { background: rgba(232,83,58,0.1); }
   .copy-btn.copied { border-color: #62bb5b; color: #62bb5b; background: rgba(98,187,91,0.08); }
-
   .effectiveness-note {
     font-size: 0.72rem;
     color: var(--muted);
     margin-top: 0.5rem;
   }
-
   hr.divider {
     border: none;
     border-top: 1px solid var(--border);
@@ -303,24 +279,20 @@
 </style>
 </head>
 <body>
-
 <!-- POKEMON LOOKUP -->
 <div class="card" style="margin-bottom:0.75rem;">
   <select id="pkmnSelect" onchange="pkmnSelected(this)" style="width:100%;background:var(--output-bg);color:var(--text);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.5rem;font-family:'Inconsolata',monospace;font-size:0.9rem;appearance:auto;">
     <option value="">— Select a Pokémon —</option>
   </select>
 </div>
-
 <!-- TYPE SELECTOR -->
 <div class="card">
   <div class="type-grid" id="typeGrid"></div>
 </div>
-
 <div style="display:flex;gap:0.75rem;width:100%;max-width:680px;margin-bottom:1rem;">
   <button class="go-btn" style="margin-bottom:0;flex:1;" onclick="generate()">▶ GENERATE</button>
   <button class="go-btn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="reset()">✕ RESET</button>
 </div>
-
 <!-- OUTPUT CARD: SUPER EFFECTIVE -->
 <div class="output-card" id="outCard1">
   <div class="output-title" id="outTitle1"></div>
@@ -328,7 +300,6 @@
   <div class="output-string" id="outString1"></div>
   <button class="copy-btn" onclick="copyString(1)">Copy to Clipboard</button>
 </div>
-
 <!-- OUTPUT CARD: EFFECTIVE -->
 <div class="output-card" id="outCard2">
   <div class="output-title" id="outTitle2"></div>
@@ -336,7 +307,6 @@
   <div class="output-string" id="outString2"></div>
   <button class="copy-btn" onclick="copyString(2)">Copy to Clipboard</button>
 </div>
-
 <!-- OUTPUT CARD: ROCKET GRUNTS -->
 <div class="output-card" id="outCard3">
   <div class="output-title">Rocket Grunts (Fast Moves)</div>
@@ -344,14 +314,12 @@
   <div class="output-string" id="outString3"></div>
   <button class="copy-btn" onclick="copyString(3)">Copy to Clipboard</button>
 </div>
-
 <script>
 // ===== TYPE DATA =====
 const ALL_TYPES = ['fighting','fire','ground','electric','rock','bug','grass','ice','steel','flying','water','dragon','ghost','poison','fairy','psychic','dark','normal'];
-
 // ===== TIER WEIGHTS =====
 // Derived from top-100 attackers (S + A+ + A tiers), counting occurrences per type
-// Higher = more top-tier Pokémon use this type → floats to top of search results
+// Higher = more top-tier Pokémon use this type. Used as a tiebreaker after resistance.
 const TYPE_WEIGHT = {
   dragon:   27,
   fire:     19,
@@ -372,7 +340,6 @@ const TYPE_WEIGHT = {
   grass:     2,
   normal:    1
 };
-
 // ===== POKEMON DATA =====
 const POKEMON_LIST = [
   {name:'Abomasnow', t:['grass','ice']},
@@ -549,7 +516,6 @@ const POKEMON_LIST = [
   {name:'Zeraora', t:['electric']},
   {name:'Zygarde', t:['dragon','ground']},
 ].sort((a,b) => a.name.localeCompare(b.name));
-
 // Populate dropdown
 const sel = document.getElementById('pkmnSelect');
 POKEMON_LIST.forEach((p, i) => {
@@ -558,14 +524,12 @@ POKEMON_LIST.forEach((p, i) => {
   opt.textContent = p.name;
   sel.appendChild(opt);
 });
-
 function pkmnSelected(selectEl) {
   if (selectEl.value === '') return;
   const pkmn = POKEMON_LIST[parseInt(selectEl.value)];
   selectedTypes = [...pkmn.t];
   updateSelectedDisplay();
 }
-
 const chart = {
   bug:      {dark:2,fairy:0.5,fighting:0.5,fire:0.5,flying:0.5,ghost:0.5,grass:2,ground:1,ice:1,normal:1,poison:0.5,psychic:2,rock:1,steel:0.5,water:1,bug:1,dragon:1,electric:1},
   dark:     {dark:0.5,fairy:0.5,fighting:0.5,ghost:2,psychic:2,bug:1,dragon:1,electric:1,fire:1,flying:1,grass:1,ground:1,ice:1,normal:1,poison:1,rock:1,steel:1,water:1},
@@ -586,26 +550,22 @@ const chart = {
   steel:    {bug:1,dark:1,dragon:1,electric:0.5,fairy:2,fighting:1,fire:0.5,flying:1,ghost:1,grass:1,ground:1,ice:2,normal:1,poison:1,psychic:1,rock:2,steel:0.5,water:0.5},
   water:    {bug:1,dark:1,dragon:0.5,electric:1,fairy:1,fighting:1,fire:2,flying:1,ghost:1,grass:0.5,ground:2,ice:1,normal:1,poison:1,psychic:1,rock:2,steel:1,water:0.5},
 };
-
 const searchNames = {
   bug:'bug',dark:'dark',dragon:'dragon',electric:'electric',fairy:'fairy',
   fighting:'fighting',fire:'fire',flying:'flying',ghost:'ghost',grass:'grass',
   ground:'ground',ice:'ice',normal:'normal',poison:'poison',psychic:'psychic',
   rock:'rock',steel:'steel',water:'water'
 };
-
 const typeColors = {
   bug:'#8cb230',dark:'#58575f',dragon:'#0f6ac0',electric:'#eed535',fairy:'#ed6ec7',
   fighting:'#c12239',fire:'#fd7d24',flying:'#748fc9',ghost:'#4a3f9f',grass:'#5db025',
   ground:'#d3a343',ice:'#61cec0',normal:'#9da0aa',poison:'#a552cc',psychic:'#ea5c8e',
   rock:'#b69e31',steel:'#417d9a',water:'#4a90d9'
 };
-
 // ===== STATE =====
 let selectedTypes = [];
 let mode = 'both';
 let generatedStrings = ['','',''];
-
 // ===== BUILD UI =====
 const grid = document.getElementById('typeGrid');
 ALL_TYPES.forEach(t => {
@@ -616,7 +576,6 @@ ALL_TYPES.forEach(t => {
   btn.onclick = () => toggleType(t);
   grid.appendChild(btn);
 });
-
 function toggleType(t) {
   if (selectedTypes.includes(t)) {
     selectedTypes = selectedTypes.filter(x => x !== t);
@@ -626,19 +585,16 @@ function toggleType(t) {
   }
   updateSelectedDisplay();
 }
-
 function updateSelectedDisplay() {
   document.querySelectorAll('.type-btn').forEach(btn => {
     btn.classList.toggle('active', selectedTypes.includes(btn.dataset.type));
   });
 }
-
 function setMode(btn) {
   mode = btn.dataset.mode;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
-
 function reset() {
   selectedTypes = [];
   updateSelectedDisplay();
@@ -646,7 +602,6 @@ function reset() {
   document.getElementById('pkmnSelect').value = '';
   ['outCard1','outCard2','outCard3'].forEach(id => document.getElementById(id).classList.remove('visible'));
 }
-
 function getEffectiveness(attackType, defTypes) {
   let mult = 1;
   defTypes.forEach(dt => {
@@ -655,22 +610,32 @@ function getEffectiveness(attackType, defTypes) {
   });
   return mult;
 }
-
-// Sort types by tier weight descending
-function sortByWeight(types) {
-  return [...types].sort((a, b) => (TYPE_WEIGHT[b] || 0) - (TYPE_WEIGHT[a] || 0));
+// How much damage a given attacker type takes back if the defender counter-attacks
+// with its own type(s). Lower = more resistant (better).
+function getResistance(atkType, defTypes) {
+  let mult = 1;
+  defTypes.forEach(dt => {
+    const m = chart[dt]?.[atkType] ?? 1;
+    mult *= (m === 0 ? 0.39 : m);
+  });
+  return mult;
 }
-
+// Sort types: most resistant to the defender's own typing first, tier weight as tiebreaker
+function sortByResistance(types, defTypes) {
+  return [...types].sort((a, b) => {
+    const diff = getResistance(a, defTypes) - getResistance(b, defTypes);
+    if (diff !== 0) return diff;
+    return (TYPE_WEIGHT[b] || 0) - (TYPE_WEIGHT[a] || 0);
+  });
+}
 function generate() {
   if (selectedTypes.length === 0) {
     alert('Please select at least one defending type!');
     return;
   }
-
   const defTypes = selectedTypes;
   const superEff = [];
   const effective = [];
-
   ALL_TYPES.forEach(atk => {
     const mult = getEffectiveness(atk, defTypes);
     if (defTypes.length === 2) {
@@ -680,35 +645,33 @@ function generate() {
       if (mult >= 1.9) superEff.push(atk);
     }
   });
-
-  // Sort both lists by tier weight before building strings
-  const sortedSuper = sortByWeight(superEff);
-  const sortedEffective = sortByWeight(effective);
-
+  // Sort both lists by resistance (most resistant first) before building strings
+  const sortedSuper = sortByResistance(superEff, defTypes);
+  const sortedEffective = sortByResistance(effective, defTypes);
   const buildString = (types) => {
     if (types.length === 0) return '(none)';
-    // All tokens globally sorted by weight, interleaved across slots
+    // All tokens globally sorted by resistance (weight as tiebreak), interleaved across slots
     const tokens = [
       ...types.map(t => ({ slot: 1, type: t })),
       ...types.map(t => ({ slot: 2, type: t })),
       ...types.map(t => ({ slot: 3, type: t })),
-    ].sort((a, b) => (TYPE_WEIGHT[b.type] || 0) - (TYPE_WEIGHT[a.type] || 0));
+    ].sort((a, b) => {
+      const diff = getResistance(a.type, defTypes) - getResistance(b.type, defTypes);
+      if (diff !== 0) return diff;
+      return (TYPE_WEIGHT[b.type] || 0) - (TYPE_WEIGHT[a.type] || 0);
+    });
     return tokens.map(tok => `@${tok.slot}${searchNames[tok.type]}`).join(',') + '&';
   };
-
   const buildFastString = (types) => {
     if (types.length === 0) return '(none)';
-    return sortByWeight(types).map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
+    return sortByResistance(types, defTypes).map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
   };
-
   const s1 = buildString(sortedSuper);
   const s2 = sortedEffective.length > 0 ? buildString(sortedEffective) : '';
   const sRocket = buildFastString(sortedEffective.length > 0 ? sortedEffective : sortedSuper);
-
   generatedStrings[0] = s1;
   generatedStrings[1] = s2;
   generatedStrings[2] = sRocket;
-
   const card1 = document.getElementById('outCard1');
   if (superEff.length > 0) {
     card1.classList.add('visible');
@@ -721,7 +684,6 @@ function generate() {
   } else {
     card1.classList.remove('visible');
   }
-
   const card2 = document.getElementById('outCard2');
   if (defTypes.length === 2 && sortedEffective.length > 0) {
     card2.classList.add('visible');
@@ -733,7 +695,6 @@ function generate() {
   } else {
     card2.classList.remove('visible');
   }
-
   const card3 = document.getElementById('outCard3');
   const rocketTypes = sortedEffective.length > 0 ? sortedEffective : sortedSuper;
   if (rocketTypes.length > 0) {
@@ -745,10 +706,8 @@ function generate() {
   } else {
     card3.classList.remove('visible');
   }
-
   card1.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
-
 function copyString(n) {
   const str = generatedStrings[n - 1];
   if (!str || str === '(none)') return;
@@ -763,6 +722,5 @@ function copyString(n) {
   });
 }
 </script>
-
 </body>
 </html>
