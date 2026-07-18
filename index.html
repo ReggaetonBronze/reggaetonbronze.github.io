@@ -620,12 +620,12 @@ function getResistance(atkType, defTypes) {
   });
   return mult;
 }
-// Sort types: most resistant to the defender's own typing first, tier weight as tiebreaker
-function sortByResistance(types, defTypes) {
+// Raid sort: tier weight (DPS proxy) first, resistance as tiebreaker
+function sortByWeight(types, defTypes) {
   return [...types].sort((a, b) => {
-    const diff = getResistance(a, defTypes) - getResistance(b, defTypes);
+    const diff = (TYPE_WEIGHT[b] || 0) - (TYPE_WEIGHT[a] || 0);
     if (diff !== 0) return diff;
-    return (TYPE_WEIGHT[b] || 0) - (TYPE_WEIGHT[a] || 0);
+    return getResistance(a, defTypes) - getResistance(b, defTypes);
   });
 }
 function generate() {
@@ -645,26 +645,26 @@ function generate() {
       if (mult >= 1.9) superEff.push(atk);
     }
   });
-  // Sort both lists by resistance (most resistant first) before building strings
-  const sortedSuper = sortByResistance(superEff, defTypes);
-  const sortedEffective = sortByResistance(effective, defTypes);
+  // Raid strings: sort by tier weight (DPS proxy), resistance as tiebreak
+  const sortedSuper = sortByWeight(superEff, defTypes);
+  const sortedEffective = sortByWeight(effective, defTypes);
   const buildString = (types) => {
     if (types.length === 0) return '(none)';
-    // All tokens globally sorted by resistance (weight as tiebreak), interleaved across slots
+    // All tokens globally sorted by weight (resistance as tiebreak), interleaved across slots
     const tokens = [
       ...types.map(t => ({ slot: 1, type: t })),
       ...types.map(t => ({ slot: 2, type: t })),
       ...types.map(t => ({ slot: 3, type: t })),
     ].sort((a, b) => {
-      const diff = getResistance(a.type, defTypes) - getResistance(b.type, defTypes);
+      const diff = (TYPE_WEIGHT[b.type] || 0) - (TYPE_WEIGHT[a.type] || 0);
       if (diff !== 0) return diff;
-      return (TYPE_WEIGHT[b.type] || 0) - (TYPE_WEIGHT[a.type] || 0);
+      return getResistance(a.type, defTypes) - getResistance(b.type, defTypes);
     });
     return tokens.map(tok => `@${tok.slot}${searchNames[tok.type]}`).join(',') + '&';
   };
   const buildFastString = (types) => {
     if (types.length === 0) return '(none)';
-    return sortByResistance(types, defTypes).map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
+    return sortByWeight(types, defTypes).map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
   };
   const s1 = buildString(sortedSuper);
   const s2 = sortedEffective.length > 0 ? buildString(sortedEffective) : '';
