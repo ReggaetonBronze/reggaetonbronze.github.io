@@ -291,6 +291,7 @@
 </div>
 <div style="display:flex;gap:0.75rem;width:100%;max-width:680px;margin-bottom:1rem;">
   <button class="go-btn" style="margin-bottom:0;flex:1;" onclick="generate()">▶ GENERATE</button>
+  <button class="go-btn" id="sTierBtn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--accent2);color:var(--accent2);" onclick="copySTier()">★ S TIER</button>
   <button class="go-btn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="reset()">✕ RESET</button>
 </div>
 <!-- OUTPUT CARD: SUPER EFFECTIVE -->
@@ -832,6 +833,15 @@ function generate() {
     card4.classList.remove('visible');
   }
   card1.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+// Static S-tier string (ranks 1-20, deduped) — never changes with selection
+const S_TIER_STRING = 'mewtwo,rayquaza,eternatus,kyurem,zacian,necrozma,groudon,salamence,garchomp,blaziken,gardevoir,lucario,tyranitar,rhyperior,alakazam,latios&';
+function copySTier() {
+  navigator.clipboard.writeText(S_TIER_STRING).then(() => {
+    const btn = document.getElementById('sTierBtn');
+    btn.textContent = '✓ COPIED';
+    setTimeout(() => { btn.textContent = '★ S TIER'; }, 2000);
+  });
 }
 function copyString(n) {
   const str = generatedStrings[n - 1];
