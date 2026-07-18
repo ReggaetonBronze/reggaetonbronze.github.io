@@ -314,6 +314,12 @@
   <div class="output-string" id="outString3"></div>
   <button class="copy-btn" onclick="copyString(3)">Copy to Clipboard</button>
 </div>
+<!-- OUTPUT CARD: BEST COUNTERS -->
+<div class="output-card" id="outCard4">
+  <div class="output-title">Best Counters (S–A Tier, Any Moveset)</div>
+  <div class="output-string" id="outString4"></div>
+  <button class="copy-btn" onclick="copyString(4)">Copy to Clipboard</button>
+</div>
 <script>
 // ===== TYPE DATA =====
 const ALL_TYPES = ['fighting','fire','ground','electric','rock','bug','grass','ice','steel','flying','water','dragon','ghost','poison','fairy','psychic','dark','normal'];
@@ -340,6 +346,111 @@ const TYPE_WEIGHT = {
   grass:     2,
   normal:    1
 };
+// ===== TOP-100 COUNTERS (S / A+ / A tiers, GO Hub raid attacker rankings) =====
+// n = in-game search name (base species; name search surfaces every form/shadow/mega owned)
+// t = attacking type(s) for that ranked form, r = overall rank
+const COUNTERS = [
+  {n:'mewtwo',t:['psychic'],r:1},
+  {n:'mewtwo',t:['psychic','fighting'],r:2},
+  {n:'rayquaza',t:['dragon','flying'],r:3},
+  {n:'eternatus',t:['poison','dragon'],r:4},
+  {n:'kyurem',t:['dragon','ice'],r:5},
+  {n:'mewtwo',t:['psychic'],r:6},
+  {n:'zacian',t:['fairy','steel'],r:7},
+  {n:'necrozma',t:['psychic','ghost'],r:8},
+  {n:'groudon',t:['ground','fire'],r:9},
+  {n:'salamence',t:['dragon','flying'],r:10},
+  {n:'garchomp',t:['dragon','ground'],r:11},
+  {n:'kyurem',t:['dragon','fire'],r:12},
+  {n:'blaziken',t:['fire','fighting'],r:13},
+  {n:'gardevoir',t:['psychic','fairy'],r:14},
+  {n:'lucario',t:['fighting','steel'],r:15},
+  {n:'salamence',t:['dragon','flying'],r:16},
+  {n:'tyranitar',t:['rock','dark'],r:17},
+  {n:'rhyperior',t:['ground','rock'],r:18},
+  {n:'alakazam',t:['psychic'],r:19},
+  {n:'latios',t:['dragon','psychic'],r:20},
+  {n:'heracross',t:['bug','fighting'],r:21},
+  {n:'necrozma',t:['psychic','steel'],r:22},
+  {n:'zamazenta',t:['fighting','steel'],r:23},
+  {n:'garchomp',t:['dragon','ground'],r:24},
+  {n:'reshiram',t:['dragon','fire'],r:25},
+  {n:'tyranitar',t:['rock','dark'],r:26},
+  {n:'gengar',t:['ghost','poison'],r:27},
+  {n:'chandelure',t:['ghost','fire'],r:28},
+  {n:'blacephalon',t:['fire','ghost'],r:29},
+  {n:'regigigas',t:['normal'],r:30},
+  {n:'mamoswine',t:['ice','ground'],r:31},
+  {n:'raikou',t:['electric'],r:32},
+  {n:'kyogre',t:['water'],r:33},
+  {n:'gallade',t:['psychic','fighting'],r:34},
+  {n:'diancie',t:['rock','fairy'],r:35},
+  {n:'blaziken',t:['fire','fighting'],r:36},
+  {n:'swampert',t:['water','ground'],r:37},
+  {n:'metagross',t:['steel','psychic'],r:38},
+  {n:'houndoom',t:['dark','fire'],r:39},
+  {n:'landorus',t:['ground','flying'],r:40},
+  {n:'groudon',t:['ground'],r:41},
+  {n:'moltres',t:['fire','flying'],r:42},
+  {n:'excadrill',t:['ground','steel'],r:43},
+  {n:'metagross',t:['steel','psychic'],r:44},
+  {n:'sceptile',t:['grass','dragon'],r:45},
+  {n:'darkrai',t:['dark'],r:46},
+  {n:'rayquaza',t:['dragon','flying'],r:47},
+  {n:'charizard',t:['fire','flying'],r:48},
+  {n:'thundurus',t:['electric','flying'],r:49},
+  {n:'terrakion',t:['rock','fighting'],r:50},
+  {n:'hydreigon',t:['dark','dragon'],r:51},
+  {n:'keldeo',t:['water','fighting'],r:52},
+  {n:'weavile',t:['dark','ice'],r:53},
+  {n:'latias',t:['dragon','psychic'],r:54},
+  {n:'landorus',t:['ground','flying'],r:55},
+  {n:'heatran',t:['fire','steel'],r:56},
+  {n:'latios',t:['dragon','psychic'],r:57},
+  {n:'zapdos',t:['electric','flying'],r:58},
+  {n:'haxorus',t:['dragon'],r:59},
+  {n:'dialga',t:['steel','dragon'],r:60},
+  {n:'gyarados',t:['water','dark'],r:61},
+  {n:'vikavolt',t:['bug','electric'],r:62},
+  {n:'gigalith',t:['rock'],r:63},
+  {n:'lunala',t:['psychic','ghost'],r:64},
+  {n:'rampardos',t:['rock'],r:65},
+  {n:'kartana',t:['grass','steel'],r:66},
+  {n:'absol',t:['dark'],r:67},
+  {n:'zekrom',t:['dragon','electric'],r:68},
+  {n:'aerodactyl',t:['rock','flying'],r:69},
+  {n:'ho-oh',t:['fire','flying'],r:70},
+  {n:'tyrantrum',t:['rock','dragon'],r:71},
+  {n:'ho-oh',t:['fire','flying'],r:72},
+  {n:'baxcalibur',t:['dragon','ice'],r:73},
+  {n:'ampharos',t:['electric','dragon'],r:74},
+  {n:'palkia',t:['water','dragon'],r:75},
+  {n:'rhyperior',t:['ground','rock'],r:76},
+  {n:'conkeldurr',t:['fighting'],r:77},
+  {n:'xurkitree',t:['electric'],r:78},
+  {n:'banette',t:['ghost'],r:79},
+  {n:'reshiram',t:['dragon','fire'],r:80},
+  {n:'chandelure',t:['ghost','fire'],r:81},
+  {n:'groudon',t:['ground'],r:82},
+  {n:'gardevoir',t:['psychic','fairy'],r:83},
+  {n:'zeraora',t:['electric'],r:84},
+  {n:'delphox',t:['fire','psychic'],r:85},
+  {n:'lucario',t:['fighting','steel'],r:86},
+  {n:'kyogre',t:['water'],r:87},
+  {n:'garchomp',t:['dragon','ground'],r:88},
+  {n:'mewtwo',t:['psychic'],r:89},
+  {n:'regieleki',t:['electric'],r:90},
+  {n:'emboar',t:['fire','fighting'],r:91},
+  {n:'tyranitar',t:['rock','dark'],r:92},
+  {n:'charizard',t:['fire','dragon'],r:93},
+  {n:'dialga',t:['steel','dragon'],r:94},
+  {n:'darmanitan',t:['fire'],r:95},
+  {n:'manectric',t:['electric'],r:96},
+  {n:'electivire',t:['electric'],r:97},
+  {n:'volcarona',t:['bug','fire'],r:98},
+  {n:'salamence',t:['dragon','flying'],r:99},
+  {n:'magnezone',t:['electric','steel'],r:100},
+];
 // ===== POKEMON DATA =====
 const POKEMON_LIST = [
   {name:'Abomasnow', t:['grass','ice']},
@@ -565,7 +676,7 @@ const typeColors = {
 // ===== STATE =====
 let selectedTypes = [];
 let mode = 'both';
-let generatedStrings = ['','',''];
+let generatedStrings = ['','','',''];
 // ===== BUILD UI =====
 const grid = document.getElementById('typeGrid');
 ALL_TYPES.forEach(t => {
@@ -598,9 +709,9 @@ function setMode(btn) {
 function reset() {
   selectedTypes = [];
   updateSelectedDisplay();
-  generatedStrings = ['','',''];
+  generatedStrings = ['','','',''];
   document.getElementById('pkmnSelect').value = '';
-  ['outCard1','outCard2','outCard3'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['outCard1','outCard2','outCard3','outCard4'].forEach(id => document.getElementById(id).classList.remove('visible'));
 }
 function getEffectiveness(attackType, defTypes) {
   let mult = 1;
@@ -705,6 +816,20 @@ function generate() {
     document.getElementById('outString3').textContent = sRocket;
   } else {
     card3.classList.remove('visible');
+  }
+  // Best counters: top-100 forms whose typing hits the defender super effectively
+  const card4 = document.getElementById('outCard4');
+  const matched = COUNTERS.filter(c => c.t.some(t => getEffectiveness(t, defTypes) >= 1.6));
+  const names = [];
+  matched.forEach(c => { if (!names.includes(c.n)) names.push(c.n); });
+  if (names.length > 0) {
+    const s4 = names.join(',') + '&';
+    generatedStrings[3] = s4;
+    card4.classList.add('visible');
+    document.getElementById('outString4').textContent = s4;
+  } else {
+    generatedStrings[3] = '';
+    card4.classList.remove('visible');
   }
   card1.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
