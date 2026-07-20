@@ -291,7 +291,7 @@
 </div>
 <div style="display:flex;gap:0.75rem;width:100%;max-width:680px;margin-bottom:1rem;">
   <button class="go-btn" style="margin-bottom:0;flex:1;" onclick="generate()">▶ GENERATE</button>
-  <button class="go-btn" id="sTierBtn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--accent2);color:var(--accent2);" onclick="copySTier()">★ S TIER</button>
+  <button class="go-btn" id="sTierBtn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--accent2);color:var(--accent2);" onclick="copySTier()">★ S/A+ TIER</button>
   <button class="go-btn" style="margin-bottom:0;width:auto;padding-left:1.25rem;padding-right:1.25rem;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="reset()">✕ RESET</button>
 </div>
 <!-- OUTPUT CARD: SUPER EFFECTIVE -->
@@ -760,11 +760,12 @@ function generate() {
   // Raid strings: sort by tier weight (DPS proxy), resistance as tiebreak
   const sortedSuper = sortByWeight(superEff, defTypes);
   const sortedEffective = sortByWeight(effective, defTypes);
+  // Charge-move-only string for raid counters. Including the fast-move slot (@1)
+  // used to pull in Pokémon whose *fast* move matched but whose charge moves didn't —
+  // since charge moves carry the real damage weight for raids, we search slots @2/@3 only.
   const buildString = (types) => {
     if (types.length === 0) return '(none)';
-    // All tokens globally sorted by weight (resistance as tiebreak), interleaved across slots
     const tokens = [
-      ...types.map(t => ({ slot: 1, type: t })),
       ...types.map(t => ({ slot: 2, type: t })),
       ...types.map(t => ({ slot: 3, type: t })),
     ].sort((a, b) => {
@@ -774,6 +775,8 @@ function generate() {
     });
     return tokens.map(tok => `@${tok.slot}${searchNames[tok.type]}`).join(',') + '&';
   };
+  // Fast-move-only string for Rocket Grunts — the goal there is burning down grunts
+  // with counter fast moves without waiting on charge moves, so this stays @1 only.
   const buildFastString = (types) => {
     if (types.length === 0) return '(none)';
     return sortByWeight(types, defTypes).map(t => `@1${searchNames[t]}`).join(',') + '&shadow&';
@@ -834,13 +837,25 @@ function generate() {
   }
   card1.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
-// Static S-tier string (ranks 1-20, deduped) — never changes with selection
-const S_TIER_STRING = 'mewtwo,rayquaza,eternatus,kyurem,zacian,necrozma,groudon,salamence,garchomp,blaziken,gardevoir,lucario,tyranitar,rhyperior,alakazam,latios&';
+// S + A+ tier string — built dynamically from the COUNTERS ranks, deduped by name.
+// GO Hub's list doesn't tag each entry with an explicit tier label, so this cutoff
+// is a judgment call rather than an exact boundary: S ≈ ranks 1-20, A+ ≈ ranks 21-50.
+// Bump S_A_PLUS_CUTOFF up (e.g. to 100) if you want A tier folded in too, or down
+// to ~20 to go back to S-only.
+const S_A_PLUS_CUTOFF = 50;
+function buildSTierString() {
+  const names = [];
+  COUNTERS.forEach(c => {
+    if (c.r <= S_A_PLUS_CUTOFF && !names.includes(c.n)) names.push(c.n);
+  });
+  return names.join(',') + '&';
+}
 function copySTier() {
-  navigator.clipboard.writeText(S_TIER_STRING).then(() => {
+  const str = buildSTierString();
+  navigator.clipboard.writeText(str).then(() => {
     const btn = document.getElementById('sTierBtn');
     btn.textContent = '✓ COPIED';
-    setTimeout(() => { btn.textContent = '★ S TIER'; }, 2000);
+    setTimeout(() => { btn.textContent = '★ S/A+ TIER'; }, 2000);
   });
 }
 function copyString(n) {
